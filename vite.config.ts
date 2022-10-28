@@ -11,7 +11,6 @@ export default defineConfig({
 	},
 	plugins: [Tov()],
 	build: {
-		minify: 'esbuild',
 		rollupOptions: {
 			output: {
 				// 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
@@ -23,12 +22,14 @@ export default defineConfig({
 			},
 		},
 	},
-	//跨域处理
 	server: {
+		//以上的ip和端口是我们本机的;下面为需要跨域的
 		proxy: {
+			//配置跨域
 			'/api': {
-				target: '', //请求后端地址
-				changeOrigin: true,
+				target: '', //后端地址
+				ws: true,
+				changeOrigin: true, //允许跨域
 				rewrite: (path) => path.replace(/^\/api/, ''),
 			},
 		},

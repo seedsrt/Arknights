@@ -9,7 +9,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import Rmovelog from 'vite-plugin-removelog'
 import ViteRestart from 'vite-plugin-restart'
 import I18n from '@intlify/vite-plugin-vue-i18n'
-import { viteMockServe } from 'vite-plugin-mock'
+// import { viteMockServe } from 'vite-plugin-mock'
 import VueRouter from 'unplugin-vue-router/vite'
 import Layouts from 'vite-plugin-vue-meta-layouts'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -17,6 +17,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import viteCompression from 'vite-plugin-compression'
 import { markdownWrapperClasses } from './plugins/markdown'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 import {
 	ArcoResolver,
@@ -45,6 +46,8 @@ import { AutoImportResolvers, normalizeResolvers } from './shared/resolvers'
 
 export default () => {
 	return [
+		// 查看资源占比
+		visualizer(),
 		// https://github.com/sxzz/unplugin-vue-macros/blob/main/README-zh-CN.md
 		VueMarcos({
 			hoistStatic: true,
@@ -79,9 +82,9 @@ export default () => {
 			safelist: markdownWrapperClasses,
 		}),
 		// mock 服务
-		viteMockServe({
-			prodEnabled: env.VITE_APP_MOCK_IN_PRODUCTION,
-		}),
+		// viteMockServe({
+		// 	prodEnabled: env.VITE_APP_MOCK_IN_PRODUCTION,
+		// }),
 		// https://icones.netlify.app/
 		Icons({
 			autoInstall: true,

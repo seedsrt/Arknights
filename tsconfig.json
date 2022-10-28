@@ -25,6 +25,6 @@
 		"src/**/*.tsx",
 		"src/**/*.vue",
 		"./vite.config.ts"
-	],
+, "src/api/api.js"	],
 	"exclude": ["node_modules", "dist"]
 }
