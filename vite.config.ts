@@ -27,7 +27,7 @@ export default defineConfig({
 		proxy: {
 			//配置跨域
 			'/api': {
-				target: '', //后端地址
+				target: 'http://101.200.158.41:8703', //后端地址
 				ws: true,
 				changeOrigin: true, //允许跨域
 				rewrite: (path) => path.replace(/^\/api/, ''),

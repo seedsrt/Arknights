@@ -52,7 +52,7 @@ class RequestHttp {
 				return {
 					...config,
 					headers: {
-						'x-access-token': token, // 请求头中携带token信息
+						Authorization: 'Bearer ' + token, // 请求头中携带token信息
 					},
 				}
 			},

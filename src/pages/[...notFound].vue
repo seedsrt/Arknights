@@ -10,7 +10,7 @@
 	</div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .notFound-page {
 	width: 100%;
 	height: 100vh;

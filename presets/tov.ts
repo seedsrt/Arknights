@@ -3,12 +3,12 @@ import { env } from './shared/env'
 import Vue from '@vitejs/plugin-vue'
 import Icons from 'unplugin-icons/vite'
 import Inspect from 'vite-plugin-inspect'
-import Markdown from './plugins/markdown'
+// import Markdown from './plugins/markdown'
 import Windicss from 'vite-plugin-windicss'
-import vueJsx from '@vitejs/plugin-vue-jsx'
+// import vueJsx from '@vitejs/plugin-vue-jsx'
 import Rmovelog from 'vite-plugin-removelog'
 import ViteRestart from 'vite-plugin-restart'
-import I18n from '@intlify/vite-plugin-vue-i18n'
+// import I18n from '@intlify/vite-plugin-vue-i18n'
 // import { viteMockServe } from 'vite-plugin-mock'
 import VueRouter from 'unplugin-vue-router/vite'
 import Layouts from 'vite-plugin-vue-meta-layouts'
@@ -16,7 +16,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import viteCompression from 'vite-plugin-compression'
-import { markdownWrapperClasses } from './plugins/markdown'
+// import { markdownWrapperClasses } from './plugins/markdown'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 import {
@@ -70,7 +70,7 @@ export default () => {
 			include: [/\.vue$/, /\.md$/],
 		}),
 		// markdown 编译插件
-		Markdown(),
+		// Markdown(),
 		// 布局系统
 		Layouts(),
 		// 调试工具
@@ -79,7 +79,7 @@ export default () => {
 		}),
 		// windicss 插件
 		Windicss({
-			safelist: markdownWrapperClasses,
+			// safelist: markdownWrapperClasses,
 		}),
 		// mock 服务
 		// viteMockServe({
@@ -132,7 +132,7 @@ export default () => {
 				imports: [
 					'vue',
 					'pinia',
-					'vue-i18n',
+					// 'vue-i18n',
 					'@vueuse/core',
 					{
 						'vue-router/auto': VueRouterExports,
@@ -146,17 +146,17 @@ export default () => {
 				},
 			}),
 		// i18n 国际化支持
-		I18n({
-			runtimeOnly: true,
-			compositionOnly: true,
-			include: [resolve(__dirname, '../locales/**')],
-		}),
+		// I18n({
+		// 	runtimeOnly: true,
+		// 	compositionOnly: true,
+		// 	include: [resolve(__dirname, '../locales/**')],
+		// }),
 		// 预设热重启服务
 		ViteRestart({
 			restart: ['.env*', 'presets/tov.[jt]s', 'presets/shared/**/*'],
 		}),
 		// tsx 支持
-		vueJsx(),
+		// vueJsx(),
 		// 生产环境资源压缩
 		viteCompression({
 			// @ts-ignore
