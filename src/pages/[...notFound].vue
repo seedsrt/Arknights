@@ -47,4 +47,5 @@
 <route lang="yaml">
 meta:
   layout: notFound
+  name: notFound
 </route>

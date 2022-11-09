@@ -4,8 +4,9 @@ import axios, {
 	AxiosRequestConfig,
 	AxiosResponse,
 } from 'axios'
-// import { ElMessage } from 'element-plus'
+const loading = createLoading()
 import NProgress from 'nprogress'
+import { router } from '~/modules/router'
 // 数据返回的接口
 // 定义请求响应参数，不含data
 interface Result {
@@ -21,7 +22,7 @@ const URL: string = import.meta.env['VITE_APP_BASE_API']
 enum RequestEnums {
 	TIMEOUT = 20000,
 	OVERDUE = 600, // 登录失效
-	FAIL = 999, // 请求失败
+	FAIL = 400, // 请求失败
 	SUCCESS = 200, // 请求成功
 }
 const config = {
@@ -39,7 +40,6 @@ class RequestHttp {
 	public constructor(config: AxiosRequestConfig) {
 		// 实例化axios
 		this.service = axios.create(config)
-
 		/**
 		 * 请求拦截器
 		 * 客户端发送请求 -> [请求拦截器] -> 服务器
@@ -58,6 +58,7 @@ class RequestHttp {
 			},
 			(error: AxiosError) => {
 				// 请求报错
+				NProgress.done()
 				Promise.reject(error)
 			}
 		)
@@ -70,16 +71,19 @@ class RequestHttp {
 			(response: AxiosResponse) => {
 				const { data, config } = response // 解构
 				if (data.code === RequestEnums.OVERDUE) {
+					ElMessage.error(data.msg)
 					// 登录信息失效，应跳转到登录页面，并清空本地的token
 					localStorage.setItem('token', '')
-					// router.replace({
-					//   path: '/login'
-					// })
+					router.replace({
+						path: '/login',
+					})
 					return Promise.reject(data)
 				}
 				// 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
 				if (data.code && data.code !== RequestEnums.SUCCESS) {
-					// ElMessage.error(data) // 此处也可以使用组件提示报错信息
+					ElMessage.error(data.msg) // 此处也可以使用组件提示报错信息
+					NProgress.done()
+					loading.loading = false
 					return Promise.reject(data)
 				}
 				NProgress.done()
@@ -88,14 +92,16 @@ class RequestHttp {
 			(error: AxiosError) => {
 				const { response } = error
 				if (response) {
+					NProgress.done()
 					this.handleCode(response.status)
 				}
 				if (!window.navigator.onLine) {
-					// ElMessage.error('网络连接失败')
+					ElMessage.error('网络连接失败')
 					// 可以跳转到错误页面，也可以不做操作
-					// return router.replace({
-					//   path: '/404'
-					// });
+					NProgress.done()
+					return router.replace({
+						path: '/404',
+					})
 				}
 			}
 		)
@@ -103,10 +109,10 @@ class RequestHttp {
 	handleCode(code: number): void {
 		switch (code) {
 			case 401:
-				// ElMessage.error('登录失败，请重新登录')
+				ElMessage.error('登录失败，请重新登录')
 				break
 			default:
-				// ElMessage.error('请求失败')
+				ElMessage.error('请求失败')
 				break
 		}
 	}

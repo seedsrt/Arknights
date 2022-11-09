@@ -1,6 +1,7 @@
 {
   "globals": {
     "EffectScope": true,
+    "ElMessage": true,
     "acceptHMRUpdate": true,
     "asyncComputed": true,
     "autoResetRef": true,
@@ -12,10 +13,13 @@
     "controlledComputed": true,
     "controlledRef": true,
     "createApp": true,
-    "createCounter": true,
+    "createAside": true,
     "createEventHook": true,
     "createGlobalState": true,
     "createInjectionState": true,
+    "createLoading": true,
+    "createLogin": true,
+    "createPclass": true,
     "createPinia": true,
     "createReactiveFn": true,
     "createSharedComposable": true,

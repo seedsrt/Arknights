@@ -37,6 +37,9 @@ declare module 'vue-router/auto/routes' {
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/[...notFound]': RouteRecordInfo<'/[...notFound]', '/:notFound(.*)', { notFound: ParamValue<true> }, { notFound: ParamValue<false> }>,
+    '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
+    '/productClassification': RouteRecordInfo<'/productClassification', '/productClassification', Record<never, never>, Record<never, never>>,
+    '/productInformation': RouteRecordInfo<'/productInformation', '/productInformation', Record<never, never>, Record<never, never>>,
   }
 }
 
