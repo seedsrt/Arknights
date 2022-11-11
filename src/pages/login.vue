@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus'
-defineOptions({
-	name: 'login',
-})
 const login = createLogin()
 const loading = createLoading()
 const ruleFormRef = ref<FormInstance>()
@@ -58,6 +55,7 @@ onMounted(() => {
 				</el-form-item>
 				<el-form-item label="密码" prop="password">
 					<el-input
+						show-password
 						v-model="login.form.password"
 						type="password"
 						placeholder="请输入密码"

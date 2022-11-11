@@ -36,19 +36,20 @@ html.dark {
 * 全局滚动条
 */
 ::-webkit-scrollbar {
-	width: 11px;
-	height: 11px;
+	width: 8px;
 	background-color: rgb(246, 247, 248);
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: rgb(233, 236, 239);
-	border-radius: 10px;
+	width: 6px;
+	background-color: #404257;
+	transition: var(--el-transition-duration) background-color;
+	border-radius: 8px;
 }
 
 ::-webkit-scrollbar-track {
-	background-color: rgb(246, 247, 248);
-	border-radius: 10px;
+	width: 6px;
+	border-radius: 8px;
 }
 
 html.dark ::-webkit-scrollbar,

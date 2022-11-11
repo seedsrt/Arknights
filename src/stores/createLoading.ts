@@ -5,6 +5,9 @@ export default defineStore('loading', {
 		return {
 			//变量
 			loading: false,
+			loading1: false,
+			loading2: false,
+			loading3: false,
 			isReloading: true,
 		}
 	},

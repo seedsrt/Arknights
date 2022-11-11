@@ -8,13 +8,12 @@
 		</div>
 		<div style="flex: content">
 			<header-top />
-			<headline />
 			<div
 				style="
 					box-sizing: border-box;
 					position: relative;
 					flex: 1 1 auto;
-					height: calc(100vh - 146px - 10px);
+					height: calc(100vh - 60px - 10px);
 					overflow-y: scroll;
 					margin-left: 8px;
 				"

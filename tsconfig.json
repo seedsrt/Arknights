@@ -6,7 +6,7 @@
 		"module": "esnext",
 		"sourceMap": true,
 		"skipLibCheck": true,
-		"isolatedModules": true,
+		"isolatedModules": false,
 		"esModuleInterop": true,
 		"lib": ["esnext", "dom"],
 		"resolveJsonModule": true,
@@ -24,7 +24,8 @@
 		"src/**/*.d.ts",
 		"src/**/*.tsx",
 		"src/**/*.vue",
-		"./vite.config.ts"
-, "src/api/api.js"	],
+		"./vite.config.ts",
+		"src/api/api.js"
+	],
 	"exclude": ["node_modules", "dist"]
 }

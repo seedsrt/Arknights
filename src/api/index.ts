@@ -40,6 +40,7 @@ class RequestHttp {
 	public constructor(config: AxiosRequestConfig) {
 		// 实例化axios
 		this.service = axios.create(config)
+		this.service.defaults.headers.post['Content-Type'] = 'multipart/form-data'
 		/**
 		 * 请求拦截器
 		 * 客户端发送请求 -> [请求拦截器] -> 服务器
@@ -74,6 +75,8 @@ class RequestHttp {
 					ElMessage.error(data.msg)
 					// 登录信息失效，应跳转到登录页面，并清空本地的token
 					localStorage.setItem('token', '')
+					loading.loading = false
+					NProgress.done()
 					router.replace({
 						path: '/login',
 					})
@@ -119,16 +122,34 @@ class RequestHttp {
 
 	// 常用方法封装
 	get<T>(url: string, params?: object): Promise<ResultData<T>> {
-		return this.service.get(url, { params })
+		return this.service({
+			method: 'GET',
+			url: url,
+			params: params,
+		})
 	}
 	post<T>(url: string, params?: object, data?: object): Promise<ResultData<T>> {
-		return this.service.post(url, params, data)
+		return this.service({
+			method: 'POST',
+			url: url,
+			params: params,
+			data: data,
+		})
 	}
 	put<T>(url: string, params?: object, data?: object): Promise<ResultData<T>> {
-		return this.service.put(url, params, data)
+		return this.service({
+			method: 'PUT',
+			url: url,
+			params: params,
+			data: data,
+		})
 	}
 	delete<T>(url: string, params?: object): Promise<ResultData<T>> {
-		return this.service.delete(url, { params })
+		return this.service({
+			method: 'DELETE',
+			url: url,
+			params: params,
+		})
 	}
 }
 

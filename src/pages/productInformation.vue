@@ -1,8 +1,276 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { UploadFile, UploadProps, UploadFiles } from 'element-plus'
+const PInfor = createPinfor()
+const loading = createLoading()
+const filterTableInforData = computed(() =>
+	PInfor.productionTotList.filter(
+		(data: any) =>
+			!PInfor.search ||
+			data.title.toLowerCase().includes(PInfor.search.toLowerCase())
+	)
+)
+const options = [
+	{
+		value: 'guide',
+		label: 'Guide',
+		children: [
+			{
+				value: 'disciplines',
+				label: 'Disciplines',
+			},
+			{
+				value: 'disciplines',
+				label: 'Disciplines',
+			},
+		],
+	},
+]
+const handleChangePtype = (value: any) => {
+	console.log(value)
+}
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+	ElMessage.warning(`至多只能上传1张图片`)
+}
+const handleChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+	console.log(uploadFile, 'uploadFile')
+	console.log(uploadFiles, 'uploadFiles')
+}
+const handleRemove = (file: UploadFile) => {
+	PInfor.fileList = []
+	console.log(file)
+}
 
-<template>产品信息管理</template>
+const handlePictureCardPreview = (file: UploadFile) => {
+	PInfor.dialogImageUrl = file.url!
+	PInfor.dialogVisible = true
+}
+onMounted(() => {
+	PInfor.getPinforList()
+})
+</script>
 
-<style lang="scss" scoped></style>
+<template>
+	<div style="position: absolute; width: 100%">
+		<el-card v-loading="loading.loading">
+			<el-table
+				ref="multipleTableRef"
+				table-layout="auto"
+				size="large"
+				:data="filterTableInforData"
+				stripe
+				style="width: auto"
+				max-height="600px"
+				fit
+				lazy
+			>
+				<el-table-column sortable prop="title" label="产品名称" />
+				<el-table-column label="产品描述" width="240">
+					<template #default="scope">
+						<div class="tableText">
+							{{ scope.row.details }}
+						</div>
+					</template>
+				</el-table-column>
+				<el-table-column prop="price" label="产品价格" width="175">
+					<template #default="scope">
+						<el-tag type="success">
+							{{ scope.row.price }}
+						</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column prop="img_url" label="产品图" width="200">
+					<template #default="scope">
+						<div
+							style="
+								display: flex;
+								justify-content: center;
+								align-items: center;
+							"
+						>
+							<el-image
+								style="height: 100px"
+								class="imageHover"
+								:preview-teleported="true"
+								:src="scope.row.img_url"
+								:previewSrcList="[scope.row.img_url]"
+								fit="contain"
+							>
+								<template #error>
+									<div class="image-slot">
+										<el-icon>
+											<i class="iconfont icon-24gl-pictureSplit"></i>
+										</el-icon>
+									</div>
+								</template>
+							</el-image>
+						</div>
+					</template>
+				</el-table-column>
+
+				<el-table-column fixed="right" width="300">
+					<template #header>
+						<div style="display: flex; justify-content: space-between">
+							<el-input
+								v-model="PInfor.search"
+								style="width: 75%"
+								clearable
+								placeholder="搜索关键字"
+							/>
+							<el-button
+								style="width: 20%"
+								type="warning"
+								@click.stop="PInfor.settingRow(true)"
+								>添加</el-button
+							>
+						</div>
+					</template>
+					<template #default="scope">
+						<el-button
+							type="primary"
+							@click.stop="PInfor.settingRow(false, scope.row)"
+						>
+							修改
+						</el-button>
+						<el-button type="danger" @click.stop="PInfor.deleteRow(scope.row)">
+							删除
+						</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+			<el-button class="mt-4" style="width: 100%">查看更多</el-button>
+		</el-card>
+		<el-dialog
+			v-model="PInfor.dialogFormVisible"
+			:title="PInfor.isAdd ? '添加产品' : '修改' + PInfor.settingItem.title"
+			:before-close="PInfor.handleClose"
+		>
+			<el-form
+				style="padding-right: 20px"
+				:model="PInfor.form"
+				v-loading="loading.loading1"
+			>
+				<el-form-item
+					:rules="[
+						{
+							required: true,
+							message: '请输入产品标题',
+							trigger: 'blur',
+						},
+					]"
+					label="产品标题"
+					label-width="120px"
+				>
+					<el-input clearable v-model="PInfor.form.title" autocomplete="off" />
+				</el-form-item>
+				<el-form-item label="产品所属品牌" label-width="120px">
+					<el-cascader
+						clearable
+						v-model="PInfor.form.ptype"
+						:options="PInfor.options"
+						:props="{ expandTrigger: 'hover' }"
+						@change="handleChangePtype"
+					/>
+				</el-form-item>
+				<el-form-item label="产品配置" label-width="120px">
+					<el-input
+						clearable
+						v-model="PInfor.form.configuration"
+						autocomplete="off"
+					/>
+				</el-form-item>
+				<el-form-item
+					:rules="[
+						{
+							required: true,
+							message: '请输入产品价格',
+							trigger: 'blur',
+						},
+					]"
+					label="产品价格"
+					label-width="120px"
+				>
+					<el-input clearable v-model="PInfor.form.price" autocomplete="off" />
+				</el-form-item>
+				<el-form-item label="产品详情" label-width="120px">
+					<el-input
+						clearable
+						v-model="PInfor.form.details"
+						type="textarea"
+						autocomplete="off"
+						:autosize="{ minRows: 4, maxRows: 6 }"
+					/>
+				</el-form-item>
+				<el-form-item label="上传图片" label-width="120px">
+					<el-upload
+						action="#"
+						v-model:file-list="PInfor.fileList"
+						list-type="picture-card"
+						:limit="1"
+						:on-exceed="handleExceed"
+						:auto-upload="false"
+						:on-change="handleChange"
+					>
+						<span>
+							<i style="font-size: 35px" class="iconfont icon-tianjia"></i>
+						</span>
+
+						<template #file="{ file }">
+							<div>
+								<img
+									class="el-upload-list__item-thumbnail"
+									:src="file.url"
+									alt=""
+								/>
+								<span class="el-upload-list__item-actions">
+									<span
+										class="el-upload-list__item-preview"
+										@click="handlePictureCardPreview(file)"
+									>
+										<span> <i class="iconfont icon-sousuofangda"></i> </span>
+									</span>
+									<span
+										v-if="!PInfor.disabled"
+										class="el-upload-list__item-delete"
+										@click="handleRemove(file)"
+									>
+										<span> <i class="iconfont icon-shanchu"></i> </span>
+									</span>
+								</span>
+							</div>
+						</template>
+					</el-upload>
+					<el-dialog v-model="PInfor.dialogVisible">
+						<img w-full :src="PInfor.dialogImageUrl" alt="Preview Image" />
+					</el-dialog>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click.stop="PInfor.handleClose">取消</el-button>
+					<el-button
+						type="primary"
+						:loading="loading.loading2"
+						@click.stop="PInfor.sumitForm"
+					>
+						提交
+					</el-button>
+				</span>
+			</template>
+		</el-dialog>
+	</div>
+</template>
+
+<style lang="scss" scoped>
+.tableText {
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+</style>
 <route lang="yaml">
 meta:
   layout: main

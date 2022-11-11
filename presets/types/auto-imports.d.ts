@@ -3,6 +3,7 @@ export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
+  const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
@@ -21,6 +22,7 @@ declare global {
   const createLoading: typeof import('../../src/stores/createLoading')['default']
   const createLogin: typeof import('../../src/stores/createLogin')['default']
   const createPclass: typeof import('../../src/stores/createPclass')['default']
+  const createPinfor: typeof import('../../src/stores/createPinfor')['default']
   const createPinia: typeof import('pinia')['createPinia']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']

@@ -21,11 +21,15 @@ const drawer1 = ref(false)
 				</div>
 			</div>
 			<div class="header-rigth">
-				<div class="open-aside">
-					<i class="iconfont icon-tongzhi" @click="drawer2 = true"> </i>
+				<div class="open-aside" @click="drawer2 = true">
+					<el-badge is-dot class="item">
+						<i class="iconfont icon-tongzhi"> </i>
+					</el-badge>
 				</div>
-				<div class="open-aside">
-					<i class="iconfont icon-24gl-tags" @click="drawer1 = true"> </i>
+				<div class="open-aside" @click="drawer1 = true">
+					<el-badge is-dot class="item">
+						<i class="iconfont icon-24gl-tags"> </i>
+					</el-badge>
 				</div>
 				<div class="open-aside">
 					<i class="iconfont icon-quanping"> </i>
