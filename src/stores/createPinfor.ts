@@ -5,6 +5,7 @@ const loading = createLoading()
 export default defineStore('PInfor', {
 	state() {
 		return {
+			isShowAdd: false,
 			productionTotList: <any>[],
 			dialogFormVisible: false,
 			search: '',
@@ -18,6 +19,12 @@ export default defineStore('PInfor', {
 				details: '',
 				status: 1,
 			},
+			params: <any>{
+				offset: 1,
+				limit: 10,
+				order: 'desc',
+			},
+			totleProduction: 0,
 			isAdd: false,
 			dialogImageUrl: '',
 			dialogVisible: false,
@@ -51,9 +58,11 @@ export default defineStore('PInfor', {
 					message: this.isAdd ? '添加成功' : '修改成功',
 				})
 			}
-			this.getPinforList()
-			this.dialogFormVisible = false
 			this.resetForm()
+			// setTimeout(() => {
+			this.getPinforList()
+			// }, 100)
+			this.dialogFormVisible = false
 		},
 		resetForm() {
 			this.form = {
@@ -94,17 +103,18 @@ export default defineStore('PInfor', {
 			}
 		},
 		async getPinforList() {
-			const params = {
-				offset: 1,
-				limit: 10,
-				order: 'desc',
-			}
+			this.productionTotList = []
+			this.totleProduction = 0
+			this.params.offset = 1
 			loading.loading = true
-			const res: any = await get('/admin/product/list', params)
+			const res: any = await get('/admin/product/list', this.params)
 			console.log(res)
 			this.productionTotList = res.data.data
+			this.isShowAdd = res.data.total > 10 ? true : false
+			this.totleProduction = res.data.total
 			await this.getPclassList()
 			loading.loading = false
+			console.log(this.isShowAdd, 'this.isShowAdd')
 		},
 		// 获取产品类型列表页
 		async getPclassList() {
@@ -137,6 +147,18 @@ export default defineStore('PInfor', {
 
 			loading.loading = false
 		},
+		async addMore() {
+			this.params.offset++
+			loading.loading = true
+			const res: any = await get('/admin/product/list', this.params)
+			console.log(res)
+			if (res.data.data.length > 0) {
+				this.productionTotList = this.productionTotList.concat(res.data.data)
+			}
+			this.isShowAdd = res.data.data.length > 10 ? true : false
+			console.log(this.productionTotList)
+			loading.loading = false
+		},
 		// 确认关闭
 		handleClose(done: () => void) {
 			ElMessageBox.confirm('确定要取消吗？', '警告', {
@@ -147,9 +169,7 @@ export default defineStore('PInfor', {
 					this.dialogFormVisible = false
 					done()
 				})
-				.catch(() => {
-					// catch error
-				})
+				.catch(() => {})
 		},
 		// 删除产品
 		deleteRow(item: any) {

@@ -59,7 +59,7 @@ onMounted(() => {
 				:data="filterTableInforData"
 				stripe
 				style="width: auto"
-				max-height="600px"
+				max-height="680px"
 				fit
 				lazy
 			>
@@ -80,30 +80,27 @@ onMounted(() => {
 				</el-table-column>
 				<el-table-column prop="img_url" label="产品图" width="200">
 					<template #default="scope">
-						<div
+						<el-image
 							style="
 								display: flex;
 								justify-content: center;
 								align-items: center;
+								height: 100px;
 							"
+							class="imageHover"
+							:preview-teleported="true"
+							:src="scope.row.img_url"
+							:previewSrcList="[scope.row.img_url]"
+							fit="contain"
 						>
-							<el-image
-								style="height: 100px"
-								class="imageHover"
-								:preview-teleported="true"
-								:src="scope.row.img_url"
-								:previewSrcList="[scope.row.img_url]"
-								fit="contain"
-							>
-								<template #error>
-									<div class="image-slot">
-										<el-icon>
-											<i class="iconfont icon-24gl-pictureSplit"></i>
-										</el-icon>
-									</div>
-								</template>
-							</el-image>
-						</div>
+							<template #error>
+								<div class="image-slot">
+									<el-icon>
+										<i class="iconfont icon-24gl-pictureSplit"></i>
+									</el-icon>
+								</div>
+							</template>
+						</el-image>
 					</template>
 				</el-table-column>
 
@@ -137,7 +134,13 @@ onMounted(() => {
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-button class="mt-4" style="width: 100%">查看更多</el-button>
+			<el-button
+				v-if="PInfor.isShowAdd"
+				class="mt-4"
+				style="width: 100%"
+				@click.stop="PInfor.addMore"
+				>查看更多</el-button
+			>
 		</el-card>
 		<el-dialog
 			v-model="PInfor.dialogFormVisible"
@@ -160,10 +163,16 @@ onMounted(() => {
 					label="产品标题"
 					label-width="120px"
 				>
-					<el-input clearable v-model="PInfor.form.title" autocomplete="off" />
+					<el-input
+						placeholder="请填写产品标题"
+						clearable
+						v-model="PInfor.form.title"
+						autocomplete="off"
+					/>
 				</el-form-item>
 				<el-form-item label="产品所属品牌" label-width="120px">
 					<el-cascader
+						placeholder="请选择产品所属品牌"
 						clearable
 						v-model="PInfor.form.ptype"
 						:options="PInfor.options"
@@ -173,6 +182,7 @@ onMounted(() => {
 				</el-form-item>
 				<el-form-item label="产品配置" label-width="120px">
 					<el-input
+						placeholder="请填写产品配置"
 						clearable
 						v-model="PInfor.form.configuration"
 						autocomplete="off"
@@ -189,10 +199,16 @@ onMounted(() => {
 					label="产品价格"
 					label-width="120px"
 				>
-					<el-input clearable v-model="PInfor.form.price" autocomplete="off" />
+					<el-input
+						placeholder="请填写产品价格"
+						clearable
+						v-model="PInfor.form.price"
+						autocomplete="off"
+					/>
 				</el-form-item>
 				<el-form-item label="产品详情" label-width="120px">
 					<el-input
+						placeholder="请填写产品详情"
 						clearable
 						v-model="PInfor.form.details"
 						type="textarea"

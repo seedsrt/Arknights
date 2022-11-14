@@ -32,6 +32,16 @@
 					<el-menu-item index="/productInformation">产品信息管理</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
+			<el-sub-menu index="任务管理">
+				<template #title>
+					<i class="mr-10px iconfont icon-chanpin"></i>
+					<span>任务管理</span>
+				</template>
+				<el-menu-item-group>
+					<el-menu-item index="/taskClassification">任务分类管理</el-menu-item>
+					<el-menu-item index="/taskList">任务列表管理</el-menu-item>
+				</el-menu-item-group>
+			</el-sub-menu>
 		</el-menu>
 	</div>
 </template>

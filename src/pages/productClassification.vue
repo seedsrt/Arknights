@@ -47,12 +47,24 @@ onMounted(() => {
 				:data="filterTableData"
 				stripe
 				style="width: auto"
-				max-height="600px"
+				max-height="680px"
 				fit
 				:row-style="{ cursor: 'pointer' }"
 				@row-click="PClass.settingBrand"
 			>
 				<el-table-column sortable prop="title" label="类型" />
+				<el-table-column
+					sortable
+					prop="created_at"
+					label="创建时间"
+					width="240"
+				/>
+				<el-table-column
+					sortable
+					prop="updated_at"
+					label="更新时间"
+					width="240"
+				/>
 				<el-table-column fixed="right" width="300">
 					<template #header>
 						<div style="display: flex; justify-content: space-between">
@@ -108,10 +120,14 @@ onMounted(() => {
 							trigger: 'blur',
 						},
 					]"
-					label="类型名称"
+					:label="PClass.isClass ? '产品类型名称' : '品牌类型名称'"
 					label-width="120px"
 				>
-					<el-input v-model="PClass.form.name" autocomplete="off" />
+					<el-input
+						:placeholder="PClass.isClass ? '请填写产品类型' : '请填写品牌类型'"
+						v-model="PClass.form.name"
+						autocomplete="off"
+					/>
 				</el-form-item>
 				<div v-if="!PClass.isClass">
 					<!-- <el-form-item label="品牌所属类型" label-width="120px">
@@ -204,24 +220,45 @@ onMounted(() => {
 				fit
 			>
 				<el-table-column sortable prop="title" label="品牌" />
+				<el-table-column
+					sortable
+					prop="created_at"
+					label="创建时间"
+					width="240"
+				/>
+				<el-table-column
+					sortable
+					prop="updated_at"
+					label="更新时间"
+					width="240"
+				/>
 				<el-table-column prop="img_url" label="品牌图" width="200">
 					<template #default="scope">
-						<el-image
-							class="imageHover"
-							:preview-teleported="true"
-							style="width: 100px; height: 100px"
-							:src="scope.row.img_url"
-							:previewSrcList="[scope.row.img_url]"
-							fit="fill"
-						>
-							<template #error>
-								<div class="image-slot">
-									<el-icon>
-										<i class="iconfont icon-24gl-pictureSplit"></i>
-									</el-icon>
-								</div>
-							</template>
-						</el-image>
+						<div class="imageHover">
+							<el-image
+								:preview-teleported="true"
+								style="
+									display: flex;
+									justify-content: center;
+									align-items: center;
+									height: 100px;
+								"
+								:src="scope.row.img_url"
+								:previewSrcList="[scope.row.img_url]"
+								fit="contain"
+							>
+								<template #error>
+									<div class="image-slot">
+										<el-icon>
+											<i class="iconfont icon-24gl-pictureSplit"></i>
+										</el-icon>
+									</div>
+								</template>
+							</el-image>
+							<!-- <span class="imageHover-actions">
+								<i class="iconfont icon-sousuofangda"></i>
+							</span> -->
+						</div>
 					</template>
 				</el-table-column>
 				<el-table-column fixed="right" width="300">
@@ -288,6 +325,30 @@ onMounted(() => {
 }
 .iconfont {
 	font-size: 20px;
+}
+.imageHover {
+	position: relative;
+}
+.imageHover:hover {
+	.imageHover-actions {
+		opacity: 1;
+	}
+}
+.imageHover-actions {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	cursor: default;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+	opacity: 0;
+	font-size: 20px;
+	background-color: var(--el-overlay-color-lighter);
+	transition: opacity var(--el-transition-duration);
 }
 </style>
 <route lang="yaml">

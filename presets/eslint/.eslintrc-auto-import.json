@@ -25,6 +25,8 @@
     "createPinia": true,
     "createReactiveFn": true,
     "createSharedComposable": true,
+    "createTList": true,
+    "createTclass": true,
     "createUnrefFn": true,
     "customRef": true,
     "debouncedRef": true,

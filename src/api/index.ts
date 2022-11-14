@@ -76,6 +76,9 @@ class RequestHttp {
 					// 登录信息失效，应跳转到登录页面，并清空本地的token
 					localStorage.setItem('token', '')
 					loading.loading = false
+					loading.loading1 = false
+					loading.loading2 = false
+					loading.loading3 = false
 					NProgress.done()
 					router.replace({
 						path: '/login',
@@ -87,6 +90,9 @@ class RequestHttp {
 					ElMessage.error(data.msg) // 此处也可以使用组件提示报错信息
 					NProgress.done()
 					loading.loading = false
+					loading.loading1 = false
+					loading.loading2 = false
+					loading.loading3 = false
 					return Promise.reject(data)
 				}
 				NProgress.done()
