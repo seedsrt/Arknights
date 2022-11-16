@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { router } from '~/modules/router'
-import { get, post } from '~/api/api'
+import { post } from '~/api/api'
 export default defineStore('asider', {
 	state() {
 		return {

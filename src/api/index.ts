@@ -4,7 +4,6 @@ import axios, {
 	AxiosRequestConfig,
 	AxiosResponse,
 } from 'axios'
-const loading = createLoading()
 import NProgress from 'nprogress'
 import { router } from '~/modules/router'
 // 数据返回的接口
@@ -19,6 +18,7 @@ interface ResultData<T = any> extends Result {
 	data?: T
 }
 const URL: string = import.meta.env['VITE_APP_BASE_API']
+
 enum RequestEnums {
 	TIMEOUT = 20000,
 	OVERDUE = 600, // 登录失效
@@ -71,6 +71,7 @@ class RequestHttp {
 		this.service.interceptors.response.use(
 			(response: AxiosResponse) => {
 				const { data, config } = response // 解构
+				const loading = createLoading()
 				if (data.code === RequestEnums.OVERDUE) {
 					ElMessage.error(data.msg)
 					// 登录信息失效，应跳转到登录页面，并清空本地的token
@@ -87,6 +88,10 @@ class RequestHttp {
 				}
 				// 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
 				if (data.code && data.code !== RequestEnums.SUCCESS) {
+					if (data.msg == '验证码错误！') {
+						const login = createLogin()
+						login.getCaptcha()
+					}
 					ElMessage.error(data.msg) // 此处也可以使用组件提示报错信息
 					NProgress.done()
 					loading.loading = false

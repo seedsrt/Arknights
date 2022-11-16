@@ -1,6 +1,6 @@
 <template>
 	<div
-		v-if="loadings.isReloading"
+		v-if="loadinges.isReloading"
 		style="display: flex; height: 100vh; background-color: #f2f2f2"
 	>
 		<div ref="asideWidth">
@@ -25,7 +25,7 @@
 	</div>
 </template>
 <script lang="ts" setup>
-const loadings = createLoading()
-const aside = createAside()
+const loadinges = createLoading()
+// const asidees = createAside()
 </script>
 <style lang="scss" scoped></style>

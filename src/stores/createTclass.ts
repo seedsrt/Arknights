@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { get, post, del } from '~/api/api'
-const loading = createLoading()
+import { get } from '~/api/api'
 export default defineStore('TClass', {
 	state() {
 		return {
@@ -24,6 +23,7 @@ export default defineStore('TClass', {
 	actions: {
 		// 提交修改、添加表单内容
 		async onSubmit() {
+			const loading = createLoading()
 			console.log(this.form, this.isChangeTaskClass)
 			loading.loading1 = true
 			const res: any = this.isChangeTaskClass
@@ -42,6 +42,7 @@ export default defineStore('TClass', {
 		},
 		// 获取任务分类
 		async getTaskClassList() {
+			const loading = createLoading()
 			loading.loading = true
 			this.TClassList = []
 			const res: any = await get('/admin/task/get_tasktype')
@@ -84,6 +85,7 @@ export default defineStore('TClass', {
 		},
 		// 删除任务分类
 		deleteTaskClass(item: any) {
+			const loading = createLoading()
 			console.log(item, '删除任务分类')
 			ElMessageBox.confirm(
 				'确定是否要删除（' + item.task_type_name + '）？',

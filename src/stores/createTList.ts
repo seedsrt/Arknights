@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
-import { get, post, del } from '~/api/api'
-import type { FormInstance, FormRules } from 'element-plus'
-const loading = createLoading()
+import { get, post } from '~/api/api'
 export default defineStore('TList', {
 	state() {
 		return {
@@ -27,27 +25,39 @@ export default defineStore('TList', {
 			TList: <any>[],
 			// 搜索内容
 			search: '',
-			// 任务类型列表
+			// 任务分类选项列表
 			taskClassList: <any>[],
+			// 任务地址选项列表
+			taskAddressList: <any>[],
 		}
 	},
 	actions: {
+		async getTest() {
+			const res: any = await get('/api/doGetCaptcha')
+			console.log(res, '跨域测试')
+		},
 		// 获取任务分类
 		async getTaskClassList() {
-			loading.loading = true
 			const res: any = await get('/admin/task/get_tasktype')
-			console.log(res, '任务类型列表')
+			console.log(res, '任务分类选项列表')
 			this.taskClassList = res.data
-			loading.loading = false
+		},
+		// 获取任务地址
+		async getTaskAddressList() {
+			const res: any = await get('/admin/task/get_addresses')
+			console.log(res, '任务地址选项列表')
+			this.taskAddressList = res.data
 		},
 		//获取任务列表
 		async getTaskList() {
+			const loading = createLoading()
 			loading.loading = true
 			this.TList = []
 			const res: any = await get('/admin/task/get_task')
 			console.log(res, '任务列表')
 			this.TList = res.data
 			await this.getTaskClassList()
+			await this.getTaskAddressList()
 			loading.loading = false
 		},
 		// 重置表单内容
@@ -82,6 +92,7 @@ export default defineStore('TList', {
 		// 提交、修改表单
 		async onSubmit() {
 			console.log(this.form, this.changeForm, this.isChangeTaskList)
+			const loading = createLoading()
 			loading.loading1 = true
 			const res: any = this.isChangeTaskList
 				? await get('/admin/task/update_task', {
@@ -135,6 +146,32 @@ export default defineStore('TList', {
 				console.log(item, '点击添加')
 			}
 			this.dialogFormVisible = true
+		},
+		deleteRow(item: any) {
+			const loading = createLoading()
+			console.log(typeof item.tid)
+			ElMessageBox.confirm(
+				'确定是否要删除（' + item.task_name + '）？',
+				'警告',
+				{
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning',
+				}
+			)
+				.then(async () => {
+					loading.loading = true
+					const res: any = await get('/admin/task/del_tasktype', {
+						task_type: item.tid,
+					})
+					console.log(res)
+					loading.loading = false
+					if (res.code === 200) {
+						ElMessage({ type: 'success', message: '删除成功' })
+						await this.getTaskList()
+					}
+				})
+				.catch(() => {})
 		},
 	},
 	persist: false, //是否储存在localStorage

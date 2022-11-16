@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import dayjs from 'dayjs'
 const Tclass = createTclass()
 const loading = createLoading()
 // 搜索内容
@@ -30,14 +31,14 @@ onMounted(() => {
 				<el-table-column sortable label="创建时间">
 					<template #default="scope">
 						<span>
-							{{ day(scope.row.created_at).format('YYYY-MM-DD HH:mm:ss') }}
+							{{ dayjs(scope.row.created_at).format('YYYY-MM-DD HH:mm:ss') }}
 						</span>
 					</template>
 				</el-table-column>
 				<el-table-column sortable label="更新时间">
 					<template #default="scope">
 						<span>
-							{{ day(scope.row.updated_at).format('YYYY-MM-DD HH:mm:ss') }}
+							{{ dayjs(scope.row.updated_at).format('YYYY-MM-DD HH:mm:ss') }}
 						</span>
 					</template>
 				</el-table-column>

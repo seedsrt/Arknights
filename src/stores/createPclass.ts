@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia'
-import { router } from '~/modules/router'
 import { get, post, del } from '~/api/api'
-import type { UploadUserFile } from 'element-plus'
-const loading = createLoading()
 export default defineStore('PClass', {
 	state() {
 		return {
@@ -51,6 +48,7 @@ export default defineStore('PClass', {
 		},
 		// 获取产品类型列表页
 		async getPclassList() {
+			const loading = createLoading()
 			loading.loading = true
 			const res: any = await get('/admin/product/types/list')
 			// console.log(res)
@@ -77,6 +75,7 @@ export default defineStore('PClass', {
 		},
 		// 删除产品类型
 		deleteRow(item: any) {
+			const loading = createLoading()
 			// console.log(item)
 			ElMessageBox.confirm('确定是否要删除（' + item.title + '）？', '警告', {
 				confirmButtonText: '确定',
@@ -99,6 +98,7 @@ export default defineStore('PClass', {
 		},
 		// 修改产品类型
 		async settingRow(item: any, index: number) {
+			const loading = createLoading()
 			index == 0 ? (this.isClass = true) : (this.isClass = false)
 			this.settingItem = item
 			this.isAdd = false
@@ -169,6 +169,7 @@ export default defineStore('PClass', {
 		},
 		// 提交添加
 		async createProduct() {
+			const loading = createLoading()
 			loading.loading2 = true
 			console.log(this.settingItem, 'this.settingItem')
 			console.log(this.form, 'this.settingItem')
@@ -191,6 +192,7 @@ export default defineStore('PClass', {
 		},
 		// 提交修改
 		async updateProduct() {
+			const loading = createLoading()
 			loading.loading2 = true
 			const params = {
 				title: this.form.name,

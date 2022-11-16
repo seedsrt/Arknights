@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
-import { router } from '~/modules/router'
 import { get, post, del } from '~/api/api'
-const loading = createLoading()
 export default defineStore('PInfor', {
 	state() {
 		return {
@@ -103,6 +101,7 @@ export default defineStore('PInfor', {
 			}
 		},
 		async getPinforList() {
+			const loading = createLoading()
 			this.productionTotList = []
 			this.totleProduction = 0
 			this.params.offset = 1
@@ -118,6 +117,7 @@ export default defineStore('PInfor', {
 		},
 		// 获取产品类型列表页
 		async getPclassList() {
+			const loading = createLoading()
 			loading.loading = true
 			const res: any = await get('/admin/product/types/list')
 			console.log(res)
@@ -148,6 +148,7 @@ export default defineStore('PInfor', {
 			loading.loading = false
 		},
 		async addMore() {
+			const loading = createLoading()
 			this.params.offset++
 			loading.loading = true
 			const res: any = await get('/admin/product/list', this.params)
@@ -173,6 +174,7 @@ export default defineStore('PInfor', {
 		},
 		// 删除产品
 		deleteRow(item: any) {
+			const loading = createLoading()
 			console.log(item)
 			ElMessageBox.confirm('确定是否要删除（' + item.title + '）？', '警告', {
 				confirmButtonText: '确定',

@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
-import { get, post } from '~/api/api'
+import { post } from '~/api/api'
 import { router } from '~/modules/router'
-const loading = createLoading()
-const aside = createAside()
 
 export default defineStore('login', {
 	state() {
@@ -18,6 +16,8 @@ export default defineStore('login', {
 	},
 	actions: {
 		async login() {
+			const loading = createLoading()
+			const aside = createAside()
 			loading.loading = true
 			const res: any = await post('/admin/login', this.form)
 			console.log(res, '登录')

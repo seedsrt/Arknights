@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import dayjs from 'dayjs'
 import type { FormInstance, FormRules } from 'element-plus'
 const TList = createTList()
 const loading = createLoading()
@@ -75,7 +76,7 @@ onMounted(() => {
 					<template #default="scope">
 						<span>
 							{{
-								day(scope.row.start_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+								dayjs(scope.row.start_time * 1000).format('YYYY-MM-DD HH:mm:ss')
 							}}
 						</span>
 					</template>
@@ -86,7 +87,9 @@ onMounted(() => {
 							{{
 								scope.row.end_time === 0
 									? '持续有效'
-									: day(scope.row.end_time * 1000).format('YYYY-MM-DD HH:mm:ss')
+									: dayjs(scope.row.end_time * 1000).format(
+											'YYYY-MM-DD HH:mm:ss'
+									  )
 							}}
 						</span>
 					</template>
@@ -115,7 +118,9 @@ onMounted(() => {
 						>
 							修改
 						</el-button>
-						<el-button type="danger"> 删除 </el-button>
+						<el-button type="danger" @click="TList.deleteRow(scope.row)">
+							删除
+						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -160,20 +165,27 @@ onMounted(() => {
 					</el-select>
 				</el-form-item>
 				<el-form-item prop="task_url" label="任务地址">
-					<el-input
-						placeholder="请输入任务地址"
-						clearable
-						v-model="TList.form.task_url"
-						autocomplete="off"
-					/>
+					<el-select placeholder="请选择任务地址" v-model="TList.form.task_url">
+						<el-option
+							v-for="item in TList.taskAddressList"
+							:key="item.taid"
+							:label="item.url_name"
+							:value="item.task_url"
+						/>
+					</el-select>
 				</el-form-item>
 				<el-form-item prop="finish_task_url" label="完成地址">
-					<el-input
-						placeholder="请输入完成地址"
-						clearable
+					<el-select
+						placeholder="请选择完成地址"
 						v-model="TList.form.finish_task_url"
-						autocomplete="off"
-					/>
+					>
+						<el-option
+							v-for="item in TList.taskAddressList"
+							:key="item.taid"
+							:label="item.url_name"
+							:value="item.finish_task_url"
+						/>
+					</el-select>
 				</el-form-item>
 				<el-form-item prop="add_score" label="新增贡献点">
 					<el-input
