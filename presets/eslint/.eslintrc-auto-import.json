@@ -27,6 +27,7 @@
     "createSharedComposable": true,
     "createSkillInfor": true,
     "createTAddress": true,
+    "createTCompletion": true,
     "createTList": true,
     "createTclass": true,
     "createUnrefFn": true,

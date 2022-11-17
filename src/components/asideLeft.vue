@@ -40,6 +40,7 @@
 				<el-menu-item-group>
 					<el-menu-item index="/taskClassification">任务分类管理</el-menu-item>
 					<el-menu-item index="/taskAddress">任务地址管理</el-menu-item>
+					<el-menu-item index="/taskCompletion">任务完成度管理</el-menu-item>
 					<el-menu-item index="/taskList">任务列表管理</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>

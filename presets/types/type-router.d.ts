@@ -43,6 +43,7 @@ declare module 'vue-router/auto/routes' {
     '/skillInformation': RouteRecordInfo<'/skillInformation', '/skillInformation', Record<never, never>, Record<never, never>>,
     '/taskAddress': RouteRecordInfo<'/taskAddress', '/taskAddress', Record<never, never>, Record<never, never>>,
     '/taskClassification': RouteRecordInfo<'/taskClassification', '/taskClassification', Record<never, never>, Record<never, never>>,
+    '/taskCompletion': RouteRecordInfo<'/taskCompletion', '/taskCompletion', Record<never, never>, Record<never, never>>,
     '/taskList': RouteRecordInfo<'/taskList', '/taskList', Record<never, never>, Record<never, never>>,
   }
 }

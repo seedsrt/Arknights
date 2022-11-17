@@ -28,6 +28,7 @@ declare global {
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createSkillInfor: typeof import('../../src/stores/createSkillInfor')['default']
   const createTAddress: typeof import('../../src/stores/createTAddress')['default']
+  const createTCompletion: typeof import('../../src/stores/createTCompletion')['default']
   const createTList: typeof import('../../src/stores/createTList')['default']
   const createTclass: typeof import('../../src/stores/createTclass')['default']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
