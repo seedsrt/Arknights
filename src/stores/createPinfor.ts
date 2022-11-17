@@ -66,17 +66,17 @@ export default defineStore('PInfor', {
 						? await post('/admin/product/create', params, data)
 						: post('/admin/product/update/' + this.settingItem.id, params, data)
 					console.log(res)
-					if (res.msg == '创建成功') {
+					if (res?.code == 200) {
 						ElMessage({
 							type: 'success',
 							message: this.isAdd ? '添加成功' : '修改成功',
 						})
+						this.resetForm()
+						setTimeout(async () => {
+							await this.getPinforList()
+						}, 100)
+						this.dialogFormVisible = false
 					}
-					this.resetForm()
-					setTimeout(async () => {
-						await this.getPinforList()
-					}, 100)
-					this.dialogFormVisible = false
 				} else {
 					ElMessage.warning('请填写必填项')
 				}
@@ -134,7 +134,7 @@ export default defineStore('PInfor', {
 			loading.loading = true
 			const res: any = await get('/admin/product/list', this.params)
 			console.log(res)
-			this.productionTotList = res.data.data
+			this.productionTotList = res.data.data ? res.data.data : []
 			this.isShowAdd = res.data.total > 10 ? true : false
 			this.totleProduction = res.data.total
 			await this.getPclassList()
@@ -147,14 +147,15 @@ export default defineStore('PInfor', {
 			loading.loading = true
 			const res: any = await get('/admin/product/types/list')
 			console.log(res)
+			let resData = res.data ? res.data : []
 			this.options = []
-			let list = res.data.filter((i: any) => {
+			let list = resData.filter((i: any) => {
 				if (i.pid === 0) {
 					return i
 				}
 			})
 			list.forEach((element: any) => {
-				let data: any = res.data.filter((i: any) => {
+				let data: any = resData.filter((i: any) => {
 					if (i.pid === element.id) {
 						return { value: i.id, label: i.title }
 					}
@@ -179,10 +180,11 @@ export default defineStore('PInfor', {
 			loading.loading = true
 			const res: any = await get('/admin/product/list', this.params)
 			console.log(res)
-			if (res.data.data.length > 0) {
-				this.productionTotList = this.productionTotList.concat(res.data.data)
+			let resData = res.data.data ? res.data.data : []
+			if (resData.length > 0) {
+				this.productionTotList = this.productionTotList.concat(resData)
 			}
-			this.isShowAdd = res.data.data.length > 10 ? true : false
+			this.isShowAdd = resData.length > 10 ? true : false
 			console.log(this.productionTotList)
 			loading.loading = false
 		},
@@ -212,10 +214,10 @@ export default defineStore('PInfor', {
 					const res: any = await del('/admin/product/del/' + item.id)
 					console.log(res)
 					loading.loading = false
-					if (res.msg == '删除成功') {
+					if (res?.code == 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
+						this.getPinforList()
 					}
-					this.getPinforList()
 				})
 				.catch(() => {
 					ElMessage({ type: 'info', message: '已取消' })

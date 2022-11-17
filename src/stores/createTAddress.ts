@@ -28,7 +28,7 @@ export default defineStore('TAddress', {
 			loading.loading = true
 			const res: any = await get('/admin/task/get_addresses')
 			console.log(res, '获取任务地址列表')
-			this.TAddressList = res.data
+			this.TAddressList = res.data ? res.data : []
 			loading.loading = false
 		},
 		// 点击修改、添加事件
@@ -100,8 +100,8 @@ export default defineStore('TAddress', {
 						)
 						this.resetForm()
 						await this.getTaskAddressList()
+						this.dialogFormVisible = false
 					}
-					this.dialogFormVisible = false
 					loading.loading1 = false
 				} else {
 					ElMessage.warning('请填写必填项')
@@ -126,7 +126,7 @@ export default defineStore('TAddress', {
 					})
 					console.log(res)
 					loading.loading = false
-					if (res.code === 200) {
+					if (res?.code === 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
 						await this.getTaskAddressList()
 					}

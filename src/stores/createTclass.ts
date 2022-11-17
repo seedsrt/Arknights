@@ -38,10 +38,10 @@ export default defineStore('TClass', {
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
 						ElMessage.success(this.isChangeTaskClass ? '修改成功' : '添加成功')
+						this.resetForm()
+						await this.getTaskClassList()
+						this.dialogFormVisible = false
 					}
-					this.resetForm()
-					await this.getTaskClassList()
-					this.dialogFormVisible = false
 					loading.loading1 = false
 				} else {
 					ElMessage.warning('请填写必填项')
@@ -55,7 +55,7 @@ export default defineStore('TClass', {
 			this.TClassList = []
 			const res: any = await get('/admin/task/get_tasktype')
 			console.log(res, '任务类型列表')
-			this.TClassList = res.data
+			this.TClassList = res.data ? res.data : []
 			loading.loading = false
 		},
 		// 点击修改、添加事件

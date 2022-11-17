@@ -21,18 +21,23 @@ export default defineStore('login', {
 			loading.loading = true
 			const res: any = await post('/admin/login', this.form)
 			console.log(res, '登录')
-			localStorage.setItem('token', res.data.access_token)
-			aside.asideActive = '/'
-			aside.breadcrumb = []
-			aside.isCollapse = false
-			aside.title = '主页'
-			ElMessage({
-				message: '登录成功',
-				type: 'success',
-			})
-			this.form = { name: '', password: '', captcha: '' }
+			if (res?.code == 200) {
+				localStorage.setItem(
+					'token',
+					res.data.access_token ? res.data.access_token : ''
+				)
+				aside.asideActive = '/'
+				aside.breadcrumb = []
+				aside.isCollapse = false
+				aside.title = '主页'
+				ElMessage({
+					message: '登录成功',
+					type: 'success',
+				})
+				this.form = { name: '', password: '', captcha: '' }
+				router.push('/')
+			}
 			loading.loading = false
-			router.push('/')
 		},
 		getCaptcha() {
 			this.captchaImg =

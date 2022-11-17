@@ -31,7 +31,7 @@ export default defineStore('TCompletion', {
 			this.TCompletionList = []
 			const res: any = await get('/admin/task/get_finishscore')
 			console.log(res, '获取任务完成度列表')
-			this.TCompletionList = res.data
+			this.TCompletionList = res.data ? res.data : []
 			loading.loading = false
 		},
 		// 重置表单内容
@@ -83,10 +83,10 @@ export default defineStore('TCompletion', {
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
 						ElMessage.success(this.isChangeTaskList ? '修改成功' : '添加成功')
+						this.resetForm()
+						await this.getTaskList()
+						this.dialogFormVisible = false
 					}
-					this.resetForm()
-					await this.getTaskList()
-					this.dialogFormVisible = false
 					loading.loading1 = false
 				} else {
 					ElMessage.warning('请填写必填项')

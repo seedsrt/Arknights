@@ -20,9 +20,6 @@ const rules = reactive<FormRules>({
 	finish_task_url: [
 		{ required: true, message: '请输入完成地址', trigger: 'blur' },
 	],
-	add_score: [
-		{ required: true, message: '请输入任务完成接口地址', trigger: 'blur' },
-	],
 	finish_score: [
 		{ required: true, message: '请输入任务完成度', trigger: 'blur' },
 	],
@@ -189,16 +186,6 @@ onMounted(() => {
 							:value="item.finish_task_url"
 						/>
 					</el-select>
-				</el-form-item>
-				<el-form-item prop="add_score" label="新增贡献点">
-					<el-input
-						style="width: 200px"
-						placeholder="请输入新增贡献点"
-						clearable
-						v-model="TList.form.add_score"
-						autocomplete="off"
-						type="number"
-					/>
 				</el-form-item>
 				<el-form-item prop="finish_score" label="完成度">
 					<el-input

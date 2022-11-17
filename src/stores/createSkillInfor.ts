@@ -53,14 +53,15 @@ export default defineStore('skillInfor', {
 			const resSkill: any = await post('/api/skillType')
 			console.log(res, '获取产品类型列表')
 			console.log(resSkill, '获取技能分类列表')
+			let resData = res.data ? res.data : []
 			this.optionsSkill = resSkill.data
-			let list = res.data.filter((i: any) => {
+			let list = resData.filter((i: any) => {
 				if (i.pid === 0) {
 					return i
 				}
 			})
 			list.forEach((element: any) => {
-				let data: any = res.data.filter((i: any) => {
+				let data: any = resData.filter((i: any) => {
 					if (i.pid === element.id) {
 						return { value: i.id, label: i.title }
 					}
@@ -84,7 +85,7 @@ export default defineStore('skillInfor', {
 			loading.loading = true
 			const res: any = await get('/admin/skills/list', this.params)
 			console.log(res, '获取技能信息列表')
-			this.skillInforList = res.data.data
+			this.skillInforList = res.data.data ? res.data.data : []
 			loading.loading = false
 		},
 		// 点击修改、添加事件
@@ -166,8 +167,8 @@ export default defineStore('skillInfor', {
 						ElMessage.success(this.isChangeSkillInfor ? '修改成功' : '添加成功')
 						this.resetForm()
 						await this.getSkillInforList()
+						this.dialogFormVisible = false
 					}
-					this.dialogFormVisible = false
 					loading.loading1 = false
 				} else {
 					ElMessage.warning('请填写必填项')
@@ -191,7 +192,7 @@ export default defineStore('skillInfor', {
 					const res: any = await del('/admin/skills/del/' + item.id)
 					console.log(res)
 					loading.loading = false
-					if (res.code === 200) {
+					if (res?.code === 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
 						await this.getSkillInforList()
 					}

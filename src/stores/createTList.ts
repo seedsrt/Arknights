@@ -16,7 +16,6 @@ export default defineStore('TList', {
 				task_type: undefined, // 任务类型
 				task_url: '', // 任务地址
 				finish_task_url: '', // 任务完成接口地址
-				add_score: undefined, // 新增贡献点
 				click_num: undefined, // 需要点击次数(最小为1)
 				start_time: '', // 任务开始时间 必须明天之后的时间戳
 				end_time: '', // 任务时间,时间为0为长期 必须明天之后的时间戳
@@ -38,13 +37,13 @@ export default defineStore('TList', {
 		async getTaskClassList() {
 			const res: any = await get('/admin/task/get_tasktype')
 			console.log(res, '任务分类选项列表')
-			this.taskClassList = res.data
+			this.taskClassList = res.data ? res.data : []
 		},
 		// 获取任务地址
 		async getTaskAddressList() {
 			const res: any = await get('/admin/task/get_addresses')
 			console.log(res, '任务地址选项列表')
-			this.taskAddressList = res.data
+			this.taskAddressList = res.data ? res.data : []
 		},
 		//获取任务列表
 		async getTaskList() {
@@ -53,7 +52,7 @@ export default defineStore('TList', {
 			this.TList = []
 			const res: any = await get('/admin/task/get_task')
 			console.log(res, '任务列表')
-			this.TList = res.data
+			this.TList = res.data ? res.data : []
 			await this.getTaskClassList()
 			await this.getTaskAddressList()
 			loading.loading = false
@@ -66,7 +65,6 @@ export default defineStore('TList', {
 				task_type: undefined,
 				task_url: '',
 				finish_task_url: '',
-				add_score: undefined,
 				click_num: undefined,
 				start_time: '',
 				end_time: '',
@@ -102,7 +100,6 @@ export default defineStore('TList', {
 								task_type: this.form.task_type,
 								task_url: this.form.task_url,
 								finish_task_url: this.form.finish_task_url,
-								add_score: this.form.add_score,
 								click_num: this.form.click_num,
 								start_time: this.form.start_time / 1000,
 								end_time: this.form.end_time / 1000,
@@ -115,7 +112,6 @@ export default defineStore('TList', {
 								task_type: this.form.task_type,
 								task_url: this.form.task_url,
 								finish_task_url: this.form.finish_task_url,
-								add_score: this.form.add_score,
 								click_num: this.form.click_num,
 								start_time: this.form.start_time / 1000,
 								end_time: this.form.end_time / 1000,
@@ -125,10 +121,10 @@ export default defineStore('TList', {
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
 						ElMessage.success(this.isChangeTaskList ? '修改成功' : '添加成功')
+						this.resetForm()
+						await this.getTaskList()
+						this.dialogFormVisible = false
 					}
-					this.resetForm()
-					await this.getTaskList()
-					this.dialogFormVisible = false
 					loading.loading1 = false
 				} else {
 					ElMessage.warning('请填写必填项')
@@ -150,7 +146,6 @@ export default defineStore('TList', {
 					task_type: item.task_type,
 					task_url: item.task_url,
 					finish_task_url: item.finish_task_url,
-					add_score: item.add_score,
 					click_num: item.click_num,
 					start_time: item.start_time * 1000,
 					end_time: item.end_time === 0 ? 0 : item.end_time * 1000,

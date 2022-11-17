@@ -53,7 +53,8 @@ export default defineStore('PClass', {
 			loading.loading = true
 			const res: any = await get('/admin/product/types/list')
 			// console.log(res)
-			this.productionClassList = res.data.filter((i: any) => {
+			let resData = res.data ? res.data : []
+			this.productionClassList = resData.filter((i: any) => {
 				if (i.pid === 0) {
 					return i
 				}
@@ -63,7 +64,7 @@ export default defineStore('PClass', {
 					id: element.id,
 					pid: element.id,
 					name: element.title,
-					data: res.data.filter((i: any) => {
+					data: resData.filter((i: any) => {
 						if (i.pid === element.id) {
 							return i
 						}
@@ -89,7 +90,7 @@ export default defineStore('PClass', {
 					// console.log(res)
 					this.refshBrand(item.pid)
 					loading.loading = false
-					if (res.msg == '删除成功') {
+					if (res?.code == 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
 					}
 				})
@@ -115,8 +116,9 @@ export default defineStore('PClass', {
 			loading.loading1 = true
 			const res: any = await get('/admin/product/types/show/' + item.id)
 			// console.log(res)
-			this.form.name = res.data.title
-			if (res.data.img_url) this.fileList = [{ url: res.data.img_url }]
+			let resData = res.data ? res.data : {}
+			this.form.name = resData.title
+			if (resData.img_url) this.fileList = [{ url: resData.img_url }]
 			loading.loading1 = false
 		},
 		// 点击产品类型去品牌类型
@@ -194,11 +196,13 @@ export default defineStore('PClass', {
 					// // console.log(data)
 					const res = await post('/admin/product/types/create', params, data)
 					// // console.log(res)
+					if (res?.code == 200) {
+						this.refshBrand(this.form.id)
+						this.fileList = []
+						this.form.name = ''
+						this.dialogFormVisible = false
+					}
 					loading.loading2 = false
-					this.dialogFormVisible = false
-					this.refshBrand(this.form.id)
-					this.fileList = []
-					this.form.name = ''
 				} else {
 					ElMessage.warning('请填写必填项')
 				}
@@ -225,12 +229,14 @@ export default defineStore('PClass', {
 						params,
 						data
 					)
+					if (res?.code == 200) {
+						this.dialogFormVisible = false
+						this.refshBrand(this.settingItem.pid)
+						this.fileList = []
+						this.form.name = ''
+					}
 					// console.log(res)
 					loading.loading2 = false
-					this.dialogFormVisible = false
-					this.refshBrand(this.settingItem.pid)
-					this.fileList = []
-					this.form.name = ''
 				} else {
 					ElMessage.warning('请填写必填项')
 				}
