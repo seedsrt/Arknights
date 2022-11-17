@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { get } from '~/api/api'
+import type { FormInstance } from 'element-plus'
 export default defineStore('TAddress', {
 	state() {
 		return {
@@ -31,7 +32,12 @@ export default defineStore('TAddress', {
 			loading.loading = false
 		},
 		// 点击修改、添加事件
-		changeTaskList(isChange: boolean, item?: any) {
+		changeTaskList(
+			formEl: FormInstance | undefined,
+			isChange: boolean,
+			item?: any
+		) {
+			formEl?.clearValidate()
 			this.isChangeTaskAddress = isChange
 			if (isChange) {
 				this.changeForm = item
@@ -68,30 +74,39 @@ export default defineStore('TAddress', {
 				.catch(() => {})
 		},
 		// 提交、修改表单
-		async onSubmit() {
-			console.log(this.form, this.changeForm, this.isChangeTaskAddress)
-			const loading = createLoading()
-			loading.loading1 = true
-			const res: any = this.isChangeTaskAddress
-				? await get('/admin/task/update_addresses', {
-						url_name: this.form.url_name,
-						task_url: this.form.task_url,
-						finish_task_url: this.form.finish_task_url,
-						taid: this.changeForm.taid,
-				  }) // 修改
-				: await get('/admin/task/add_addresses', {
-						url_name: this.form.url_name,
-						task_url: this.form.task_url,
-						finish_task_url: this.form.finish_task_url,
-				  }) // 添加
-			console.log(res, '提交修改、更改表单')
-			if (res?.code == 200) {
-				ElMessage.success(this.isChangeTaskAddress ? '修改成功' : '添加成功')
-				this.resetForm()
-				await this.getTaskAddressList()
-			}
-			this.dialogFormVisible = false
-			loading.loading1 = false
+		async onSubmit(formEl: FormInstance | undefined) {
+			if (!formEl) return
+			await formEl.validate(async (valid: any, fields: any) => {
+				if (valid) {
+					console.log(this.form, this.changeForm, this.isChangeTaskAddress)
+					const loading = createLoading()
+					loading.loading1 = true
+					const res: any = this.isChangeTaskAddress
+						? await get('/admin/task/update_addresses', {
+								url_name: this.form.url_name,
+								task_url: this.form.task_url,
+								finish_task_url: this.form.finish_task_url,
+								taid: this.changeForm.taid,
+						  }) // 修改
+						: await get('/admin/task/add_addresses', {
+								url_name: this.form.url_name,
+								task_url: this.form.task_url,
+								finish_task_url: this.form.finish_task_url,
+						  }) // 添加
+					console.log(res, '提交修改、更改表单')
+					if (res?.code == 200) {
+						ElMessage.success(
+							this.isChangeTaskAddress ? '修改成功' : '添加成功'
+						)
+						this.resetForm()
+						await this.getTaskAddressList()
+					}
+					this.dialogFormVisible = false
+					loading.loading1 = false
+				} else {
+					ElMessage.warning('请填写必填项')
+				}
+			})
 		},
 		deleteRow(item: any) {
 			const loading = createLoading()

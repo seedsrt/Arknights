@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
+import type { FormInstance, FormRules } from 'element-plus'
 const Tclass = createTclass()
 const loading = createLoading()
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+	task_type_name: [
+		{ required: true, message: '请输入任务分类名称', trigger: 'blur' },
+	],
+})
 // 搜索内容
 const filterTableData = computed(() =>
 	Tclass.TClassList.filter(
@@ -54,7 +61,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="Tclass.changeTaskClass(false)"
+								@click.stop="Tclass.changeTaskClass(ruleFormRef, false)"
 								>添加</el-button
 							>
 						</div>
@@ -62,7 +69,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click.stop="Tclass.changeTaskClass(true, scope.row)"
+							@click.stop="Tclass.changeTaskClass(ruleFormRef, true, scope.row)"
 						>
 							修改
 						</el-button>
@@ -86,18 +93,15 @@ onMounted(() => {
 			:before-close="Tclass.handleClosedialog"
 		>
 			<el-form
+				:rules="rules"
 				style="padding-right: 20px"
 				:model="Tclass.form"
 				v-loading="loading.loading1"
+				class="demo-ruleForm"
+				ref="ruleFormRef"
 			>
 				<el-form-item
-					:rules="[
-						{
-							required: true,
-							message: '请输入任务分类名称',
-							trigger: 'blur',
-						},
-					]"
+					prop="task_type_name"
 					label="任务分类名称"
 					label-width="120px"
 				>
@@ -105,6 +109,7 @@ onMounted(() => {
 						v-model="Tclass.form.task_type_name"
 						clearable
 						autocomplete="off"
+						placeholder="请输入任务分类名称"
 					/>
 				</el-form-item>
 			</el-form>
@@ -114,7 +119,7 @@ onMounted(() => {
 					<el-button
 						type="primary"
 						:loading="loading.loading2"
-						@click.stop="Tclass.onSubmit"
+						@click.stop="Tclass.onSubmit(ruleFormRef)"
 					>
 						提交
 					</el-button>

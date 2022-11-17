@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { get, post } from '~/api/api'
+import type { FormInstance } from 'element-plus'
 export default defineStore('TList', {
 	state() {
 		return {
@@ -20,6 +21,7 @@ export default defineStore('TList', {
 				start_time: '', // 任务开始时间 必须明天之后的时间戳
 				end_time: '', // 任务时间,时间为0为长期 必须明天之后的时间戳
 				sort: '', // 排序 值越大越排在前面
+				finish_score: undefined, // 完成度
 			},
 			// 任务列表
 			TList: <any>[],
@@ -32,10 +34,6 @@ export default defineStore('TList', {
 		}
 	},
 	actions: {
-		async getTest() {
-			const res: any = await get('/api/doGetCaptcha')
-			console.log(res, '跨域测试')
-		},
 		// 获取任务分类
 		async getTaskClassList() {
 			const res: any = await get('/admin/task/get_tasktype')
@@ -73,6 +71,7 @@ export default defineStore('TList', {
 				start_time: '',
 				end_time: '',
 				sort: '',
+				finish_score: undefined,
 			}
 		},
 		// 关闭对话框
@@ -90,48 +89,64 @@ export default defineStore('TList', {
 				.catch(() => {})
 		},
 		// 提交、修改表单
-		async onSubmit() {
-			console.log(this.form, this.changeForm, this.isChangeTaskList)
-			const loading = createLoading()
-			loading.loading1 = true
-			const res: any = this.isChangeTaskList
-				? await get('/admin/task/update_task', {
-						task_name: this.form.task_name,
-						task_type: this.form.task_type,
-						task_url: this.form.task_url,
-						finish_task_url: this.form.finish_task_url,
-						add_score: this.form.add_score,
-						click_num: this.form.click_num,
-						start_time: this.form.start_time / 1000,
-						end_time: this.form.end_time / 1000,
-						sort: this.form.sort,
-						tid: this.changeForm.tid,
-				  }) // 修改
-				: await get('/admin/task/add_task', {
-						task_name: this.form.task_name,
-						task_type: this.form.task_type,
-						task_url: this.form.task_url,
-						finish_task_url: this.form.finish_task_url,
-						add_score: this.form.add_score,
-						click_num: this.form.click_num,
-						start_time: this.form.start_time / 1000,
-						end_time: this.form.end_time / 1000,
-						sort: this.form.sort,
-				  }) // 添加
-			console.log(res, '提交修改、更改表单')
-			if (res?.code == 200) {
-				ElMessage.success(this.isChangeTaskList ? '修改成功' : '添加成功')
-			}
-			this.resetForm()
-			await this.getTaskList()
-			this.dialogFormVisible = false
-			loading.loading1 = false
+		async onSubmit(formEl: FormInstance | undefined) {
+			if (!formEl) return
+			await formEl.validate(async (valid: any, fields: any) => {
+				if (valid) {
+					console.log(this.form, this.changeForm, this.isChangeTaskList)
+					const loading = createLoading()
+					loading.loading1 = true
+					const res: any = this.isChangeTaskList
+						? await get('/admin/task/update_task', {
+								task_name: this.form.task_name,
+								task_type: this.form.task_type,
+								task_url: this.form.task_url,
+								finish_task_url: this.form.finish_task_url,
+								add_score: this.form.add_score,
+								click_num: this.form.click_num,
+								start_time: this.form.start_time / 1000,
+								end_time: this.form.end_time / 1000,
+								sort: this.form.sort,
+								finish_score: this.form.finish_score,
+								tid: this.changeForm.tid,
+						  }) // 修改
+						: await get('/admin/task/add_task', {
+								task_name: this.form.task_name,
+								task_type: this.form.task_type,
+								task_url: this.form.task_url,
+								finish_task_url: this.form.finish_task_url,
+								add_score: this.form.add_score,
+								click_num: this.form.click_num,
+								start_time: this.form.start_time / 1000,
+								end_time: this.form.end_time / 1000,
+								sort: this.form.sort,
+								finish_score: this.form.finish_score,
+						  }) // 添加
+					console.log(res, '提交修改、更改表单')
+					if (res?.code == 200) {
+						ElMessage.success(this.isChangeTaskList ? '修改成功' : '添加成功')
+					}
+					this.resetForm()
+					await this.getTaskList()
+					this.dialogFormVisible = false
+					loading.loading1 = false
+				} else {
+					ElMessage.warning('请填写必填项')
+				}
+			})
 		},
 		// 点击修改、添加事件
-		changeTaskList(isChange: boolean, item?: any) {
+		changeTaskList(
+			formEl: FormInstance | undefined,
+			isChange: boolean,
+			item?: any
+		) {
+			formEl?.clearValidate()
 			this.isChangeTaskList = isChange
 			if (isChange) {
 				this.changeForm = item
+				console.log();
+				
 				this.form = {
 					task_name: item.task_name,
 					task_type: item.task_type,
@@ -142,6 +157,7 @@ export default defineStore('TList', {
 					start_time: item.start_time * 1000,
 					end_time: item.end_time === 0 ? 0 : item.end_time * 1000,
 					sort: item.sort,
+					finish_score: item.finish_score,
 				}
 				console.log(item, '点击添加')
 			}
@@ -162,7 +178,7 @@ export default defineStore('TList', {
 				.then(async () => {
 					loading.loading = true
 					const res: any = await get('/admin/task/del_tasktype', {
-						task_type: item.tid,
+						tid: item.tid,
 					})
 					console.log(res)
 					loading.loading = false

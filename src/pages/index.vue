@@ -16,12 +16,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<el-card class="w-250">
+	<el-card>
 		<h1>欢迎使用</h1>
 		当前时间为：{{ dayjs(time).format('YYYY-MM-DD HH:mm:ss') }}
-		<div>
-			<el-button @click.stop="TList.getTest"> 跨域测试 </el-button>
-		</div>
 	</el-card>
 </template>
 

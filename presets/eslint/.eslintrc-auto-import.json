@@ -25,6 +25,7 @@
     "createPinia": true,
     "createReactiveFn": true,
     "createSharedComposable": true,
+    "createSkillInfor": true,
     "createTAddress": true,
     "createTList": true,
     "createTclass": true,

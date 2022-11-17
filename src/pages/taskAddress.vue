@@ -60,7 +60,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="TAddress.changeTaskList(false)"
+								@click.stop="TAddress.changeTaskList(ruleFormRef, false)"
 								>添加</el-button
 							>
 						</div>
@@ -68,7 +68,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click="TAddress.changeTaskList(true, scope.row)"
+							@click="TAddress.changeTaskList(ruleFormRef, true, scope.row)"
 						>
 							修改
 						</el-button>
@@ -79,7 +79,15 @@ onMounted(() => {
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<el-dialog v-model="TAddress.dialogFormVisible" :title="'更改'">
+		<el-dialog
+			v-model="TAddress.dialogFormVisible"
+			:title="
+				TAddress.isChangeTaskAddress
+					? '修改' + TAddress.changeForm.url_name
+					: '添加任务地址'
+			"
+			:before-close="TAddress.handleClose"
+		>
 			<el-form
 				style="padding-right: 20px"
 				:model="TAddress.form"
@@ -102,7 +110,7 @@ onMounted(() => {
 						clearable
 						v-model="TAddress.form.task_url"
 						autocomplete="off"
-						placeholder="请输入任务跳转地址"
+						placeholder="请输入任务跳转地址(前端地址)"
 					/>
 				</el-form-item>
 				<el-form-item prop="finish_task_url" label="任务完成地址">
@@ -110,14 +118,17 @@ onMounted(() => {
 						clearable
 						v-model="TAddress.form.finish_task_url"
 						autocomplete="off"
-						placeholder="请输入任务完成地址"
+						placeholder="请输入任务完成地址(后端接口)"
 					/>
 				</el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click.stop="TAddress.handleClose">取消</el-button>
-					<el-button type="primary" @click.stop="TAddress.onSubmit">
+					<el-button
+						type="primary"
+						@click.stop="TAddress.onSubmit(ruleFormRef)"
+					>
 						提交
 					</el-button>
 				</span>

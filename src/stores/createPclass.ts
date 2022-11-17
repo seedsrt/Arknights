@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { get, post, del } from '~/api/api'
+import type { FormInstance } from 'element-plus'
 export default defineStore('PClass', {
 	state() {
 		return {
@@ -97,7 +98,12 @@ export default defineStore('PClass', {
 				})
 		},
 		// 修改产品类型
-		async settingRow(item: any, index: number) {
+		async settingRow(
+			formEl: FormInstance | undefined,
+			item: any,
+			index: number
+		) {
+			formEl?.clearValidate()
 			const loading = createLoading()
 			index == 0 ? (this.isClass = true) : (this.isClass = false)
 			this.settingItem = item
@@ -134,7 +140,8 @@ export default defineStore('PClass', {
 			// console.log(this.form, 'this.form')
 		},
 		// 点击添加
-		onAddItem(item: any) {
+		onAddItem(formEl: FormInstance | undefined, item: any) {
+			formEl?.clearValidate()
 			item == 0 ? (this.isClass = true) : (this.isClass = false)
 			this.isAdd = true
 			this.dialogFormVisible = true
@@ -168,52 +175,66 @@ export default defineStore('PClass', {
 			this.productionBrandList = []
 		},
 		// 提交添加
-		async createProduct() {
-			const loading = createLoading()
-			loading.loading2 = true
-			console.log(this.settingItem, 'this.settingItem')
-			console.log(this.form, 'this.settingItem')
-			const params = {
-				title: this.form.name,
-				pid: this.form.id,
-			}
-			let data: any = new FormData()
-			this.fileList[0]?.raw
-				? data.append('img_url', this.fileList[0]?.raw)
-				: (data = undefined)
-			// // console.log(data)
-			const res = await post('/admin/product/types/create', params, data)
-			// // console.log(res)
-			loading.loading2 = false
-			this.dialogFormVisible = false
-			this.refshBrand(this.form.id)
-			this.fileList = []
-			this.form.name = ''
+		async createProduct(formEl: FormInstance | undefined) {
+			if (!formEl) return
+			await formEl.validate(async (valid: any, fields: any) => {
+				if (valid) {
+					const loading = createLoading()
+					loading.loading2 = true
+					console.log(this.settingItem, 'this.settingItem')
+					console.log(this.form, 'this.settingItem')
+					const params = {
+						title: this.form.name,
+						pid: this.form.id,
+					}
+					let data: any = new FormData()
+					this.fileList[0]?.raw
+						? data.append('img_url', this.fileList[0]?.raw)
+						: (data = undefined)
+					// // console.log(data)
+					const res = await post('/admin/product/types/create', params, data)
+					// // console.log(res)
+					loading.loading2 = false
+					this.dialogFormVisible = false
+					this.refshBrand(this.form.id)
+					this.fileList = []
+					this.form.name = ''
+				} else {
+					ElMessage.warning('请填写必填项')
+				}
+			})
 		},
 		// 提交修改
-		async updateProduct() {
-			const loading = createLoading()
-			loading.loading2 = true
-			const params = {
-				title: this.form.name,
-				pid: this.settingItem.pid,
-			}
-			let data: any = new FormData()
-			this.fileList[0]?.raw
-				? data.append('img_url', this.fileList[0]?.raw)
-				: (data = undefined)
-			// console.log(data)
-			const res = await post(
-				'/admin/product/types/update/' + this.settingItem.id,
-				params,
-				data
-			)
-			// console.log(res)
-			loading.loading2 = false
-			this.dialogFormVisible = false
-			this.refshBrand(this.settingItem.pid)
-			this.fileList = []
-			this.form.name = ''
+		async updateProduct(formEl: FormInstance | undefined) {
+			if (!formEl) return
+			await formEl.validate(async (valid: any, fields: any) => {
+				if (valid) {
+					const loading = createLoading()
+					loading.loading2 = true
+					const params = {
+						title: this.form.name,
+						pid: this.settingItem.pid,
+					}
+					let data: any = new FormData()
+					this.fileList[0]?.raw
+						? data.append('img_url', this.fileList[0]?.raw)
+						: (data = undefined)
+					// console.log(data)
+					const res = await post(
+						'/admin/product/types/update/' + this.settingItem.id,
+						params,
+						data
+					)
+					// console.log(res)
+					loading.loading2 = false
+					this.dialogFormVisible = false
+					this.refshBrand(this.settingItem.pid)
+					this.fileList = []
+					this.form.name = ''
+				} else {
+					ElMessage.warning('请填写必填项')
+				}
+			})
 		},
 	},
 	persist: false, //是否储存在localStorage

@@ -23,13 +23,16 @@ const rules = reactive<FormRules>({
 	add_score: [
 		{ required: true, message: '请输入任务完成接口地址', trigger: 'blur' },
 	],
+	finish_score: [
+		{ required: true, message: '请输入任务完成度', trigger: 'blur' },
+	],
 	click_num: [
 		{ required: true, message: '请输入需要点击次数(最小为1)', trigger: 'blur' },
 	],
 	start_time: [
 		{
 			required: true,
-			message: '请输入任务开始时间 必须明天之后的时间戳',
+			message: '请输入任务开始时间',
 			trigger: 'blur',
 		},
 	],
@@ -106,7 +109,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="TList.changeTaskList(false)"
+								@click.stop="TList.changeTaskList(ruleFormRef, false)"
 								>添加</el-button
 							>
 						</div>
@@ -114,7 +117,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click="TList.changeTaskList(true, scope.row)"
+							@click="TList.changeTaskList(ruleFormRef, true, scope.row)"
 						>
 							修改
 						</el-button>
@@ -176,7 +179,7 @@ onMounted(() => {
 				</el-form-item>
 				<el-form-item prop="finish_task_url" label="完成地址">
 					<el-select
-						placeholder="请选择完成地址"
+						placeholder="请选择任务完成接口地址"
 						v-model="TList.form.finish_task_url"
 					>
 						<el-option
@@ -197,10 +200,20 @@ onMounted(() => {
 						type="number"
 					/>
 				</el-form-item>
+				<el-form-item prop="finish_score" label="完成度">
+					<el-input
+						style="width: 200px"
+						placeholder="请输入完成度"
+						clearable
+						v-model="TList.form.finish_score"
+						autocomplete="off"
+						type="number"
+					/>
+				</el-form-item>
 				<el-form-item prop="click_num" label="需要点击次数">
 					<el-input
 						style="width: 200px"
-						placeholder="请输入需要点击次数"
+						placeholder="请输入点击次数(最小为1)"
 						clearable
 						v-model="TList.form.click_num"
 						autocomplete="off"
@@ -214,7 +227,7 @@ onMounted(() => {
 							:disabled-date="disabledDate"
 							type="datetime"
 							label="开始时间"
-							placeholder="请选择任务开始时间"
+							placeholder="必须明天之后的时间"
 							autocomplete="off"
 							style="width: 200px"
 							value-format="x"
@@ -227,7 +240,7 @@ onMounted(() => {
 							:disabled-date="disabledDate"
 							type="datetime"
 							label="截止时间"
-							placeholder="请选择截止时间"
+							placeholder="必须明天之后的时间"
 							autocomplete="off"
 							style="width: 200px"
 							value-format="x"
@@ -240,7 +253,7 @@ onMounted(() => {
 						clearable
 						v-model="TList.form.sort"
 						autocomplete="off"
-						placeholder="请输入排序（值越大越靠前）"
+						placeholder="请输入排序(值越大越靠前)"
 					/>
 				</el-form-item>
 			</el-form>
@@ -250,7 +263,7 @@ onMounted(() => {
 					<el-button
 						type="primary"
 						:loading="loading.loading2"
-						@click.stop="TList.onSubmit"
+						@click.stop="TList.onSubmit(ruleFormRef)"
 					>
 						提交
 					</el-button>

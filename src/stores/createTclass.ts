@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { get } from '~/api/api'
+import type { FormInstance } from 'element-plus'
 export default defineStore('TClass', {
 	state() {
 		return {
@@ -22,23 +23,30 @@ export default defineStore('TClass', {
 	},
 	actions: {
 		// 提交修改、添加表单内容
-		async onSubmit() {
-			const loading = createLoading()
-			console.log(this.form, this.isChangeTaskClass)
-			loading.loading1 = true
-			const res: any = this.isChangeTaskClass
-				? await get('/admin/task/update_tasktype', this.form) // 修改
-				: await get('/admin/task/add_tasktype', {
-						task_type_name: this.form.task_type_name,
-				  }) // 添加
-			console.log(res, '提交修改、更改表单')
-			if (res?.code == 200) {
-				ElMessage.success(this.isChangeTaskClass ? '修改成功' : '添加成功')
-			}
-			this.resetForm()
-			await this.getTaskClassList()
-			this.dialogFormVisible = false
-			loading.loading1 = false
+		async onSubmit(formEl: FormInstance | undefined) {
+			if (!formEl) return
+			await formEl.validate(async (valid: any, fields: any) => {
+				if (valid) {
+					const loading = createLoading()
+					console.log(this.form, this.isChangeTaskClass)
+					loading.loading1 = true
+					const res: any = this.isChangeTaskClass
+						? await get('/admin/task/update_tasktype', this.form) // 修改
+						: await get('/admin/task/add_tasktype', {
+								task_type_name: this.form.task_type_name,
+						  }) // 添加
+					console.log(res, '提交修改、更改表单')
+					if (res?.code == 200) {
+						ElMessage.success(this.isChangeTaskClass ? '修改成功' : '添加成功')
+					}
+					this.resetForm()
+					await this.getTaskClassList()
+					this.dialogFormVisible = false
+					loading.loading1 = false
+				} else {
+					ElMessage.warning('请填写必填项')
+				}
+			})
 		},
 		// 获取任务分类
 		async getTaskClassList() {
@@ -51,7 +59,12 @@ export default defineStore('TClass', {
 			loading.loading = false
 		},
 		// 点击修改、添加事件
-		async changeTaskClass(isChange: boolean, item?: any) {
+		async changeTaskClass(
+			formEl: FormInstance | undefined,
+			isChange: boolean,
+			item?: any
+		) {
+			formEl?.clearValidate()
 			this.isChangeTaskClass = isChange
 			if (isChange) {
 				this.changeForm = item

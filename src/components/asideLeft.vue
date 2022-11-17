@@ -34,13 +34,22 @@
 			</el-sub-menu>
 			<el-sub-menu index="任务管理">
 				<template #title>
-					<i class="mr-10px iconfont icon-chanpin"></i>
+					<i class="mr-10px iconfont icon-renwu"></i>
 					<span>任务管理</span>
 				</template>
 				<el-menu-item-group>
 					<el-menu-item index="/taskClassification">任务分类管理</el-menu-item>
 					<el-menu-item index="/taskAddress">任务地址管理</el-menu-item>
 					<el-menu-item index="/taskList">任务列表管理</el-menu-item>
+				</el-menu-item-group>
+			</el-sub-menu>
+			<el-sub-menu index="技能管理">
+				<template #title>
+					<i class="mr-10px iconfont icon-yuzhijineng"></i>
+					<span>技能管理</span>
+				</template>
+				<el-menu-item-group>
+					<el-menu-item index="/skillInformation">技能信息管理</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
 		</el-menu>

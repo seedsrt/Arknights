@@ -20,7 +20,7 @@ interface ResultData<T = any> extends Result {
 const URL: string = import.meta.env['VITE_APP_BASE_API']
 
 enum RequestEnums {
-	TIMEOUT = 20000,
+	TIMEOUT = 200000,
 	OVERDUE = 600, // 登录失效
 	FAIL = 400, // 请求失败
 	SUCCESS = 200, // 请求成功

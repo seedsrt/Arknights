@@ -26,6 +26,7 @@ declare global {
   const createPinia: typeof import('pinia')['createPinia']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
+  const createSkillInfor: typeof import('../../src/stores/createSkillInfor')['default']
   const createTAddress: typeof import('../../src/stores/createTAddress')['default']
   const createTList: typeof import('../../src/stores/createTList')['default']
   const createTclass: typeof import('../../src/stores/createTclass')['default']

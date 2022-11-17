@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { get, post, del } from '~/api/api'
+import type { FormInstance } from 'element-plus'
 export default defineStore('PInfor', {
 	state() {
 		return {
@@ -31,36 +32,55 @@ export default defineStore('PInfor', {
 		}
 	},
 	actions: {
+		// 设置级联选择器
+		addDisabledForStatus(arr: any) {
+			let newArr = JSON.parse(JSON.stringify(arr))
+			newArr.forEach((item: any) => {
+				if (item.children.length > 0) {
+					item.disabled = false
+				} else {
+					item.disabled = true
+				}
+			})
+			return newArr
+		},
 		// 提交修改、添加表单
-		async sumitForm() {
-			const params = {
-				title: this.form.title,
-				ptype: this.form.ptype[1] ? this.form.ptype[1] : undefined,
-				configuration: this.form.configuration,
-				price: this.form.price,
-				details: this.form.details,
-				status: 1,
-			}
-			console.log(this.form)
-			let data: any = new FormData()
-			this.fileList[0]?.raw
-				? data.append('img_url', this.fileList[0]?.raw)
-				: (data = undefined)
-			const res: any = this.isAdd
-				? await post('/admin/product/create', params, data)
-				: post('/admin/product/update/' + this.settingItem.id, params, data)
-			console.log(res)
-			if (res.msg == '创建成功') {
-				ElMessage({
-					type: 'success',
-					message: this.isAdd ? '添加成功' : '修改成功',
-				})
-			}
-			this.resetForm()
-			// setTimeout(() => {
-			this.getPinforList()
-			// }, 100)
-			this.dialogFormVisible = false
+		async sumitForm(formEl: FormInstance | undefined) {
+			if (!formEl) return
+			await formEl.validate(async (valid: any, fields: any) => {
+				if (valid) {
+					const params = {
+						title: this.form.title,
+						ptype: this.form.ptype[1] ? this.form.ptype[1] : undefined,
+						configuration: this.form.configuration,
+						price: this.form.price,
+						details: this.form.details,
+						status: 1,
+					}
+					console.log(this.form)
+					let data: any = new FormData()
+					this.fileList[0]?.raw
+						? data.append('img_url', this.fileList[0]?.raw)
+						: (data = undefined)
+					const res: any = this.isAdd
+						? await post('/admin/product/create', params, data)
+						: post('/admin/product/update/' + this.settingItem.id, params, data)
+					console.log(res)
+					if (res.msg == '创建成功') {
+						ElMessage({
+							type: 'success',
+							message: this.isAdd ? '添加成功' : '修改成功',
+						})
+					}
+					this.resetForm()
+					setTimeout(async () => {
+						await this.getPinforList()
+					}, 100)
+					this.dialogFormVisible = false
+				} else {
+					ElMessage.warning('请填写必填项')
+				}
+			})
 		},
 		resetForm() {
 			this.form = {
@@ -75,7 +95,12 @@ export default defineStore('PInfor', {
 			this.fileList = []
 		},
 		// 点击修改、添加按钮
-		settingRow(isSetting: boolean, item?: any) {
+		settingRow(
+			formEl: FormInstance | undefined,
+			isSetting: boolean,
+			item?: any
+		) {
+			formEl?.clearValidate()
 			this.dialogFormVisible = true
 			this.isAdd = isSetting
 			console.log(this.options, 'this.options')
@@ -100,6 +125,7 @@ export default defineStore('PInfor', {
 				this.settingItem = item
 			}
 		},
+		// 获取产品品牌列表页
 		async getPinforList() {
 			const loading = createLoading()
 			this.productionTotList = []
@@ -143,8 +169,8 @@ export default defineStore('PInfor', {
 					children: data,
 				})
 			})
+			this.options = this.addDisabledForStatus(this.options)
 			console.log(this.options, 'this.options')
-
 			loading.loading = false
 		},
 		async addMore() {

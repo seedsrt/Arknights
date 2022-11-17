@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import type { UploadFile, UploadProps, UploadFiles } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 const PClass = createPclass()
 const loading = createLoading()
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+	name: [
+		{
+			required: true,
+			message: `${PClass.isClass ? '请填写品牌类型' : '请填写产品类型'}`,
+			trigger: 'blur',
+		},
+	],
+})
 const filterTableData = computed(() =>
 	PClass.productionClassList.filter(
 		(data: any) =>
@@ -77,7 +88,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="PClass.onAddItem(0)"
+								@click.stop="PClass.onAddItem(ruleFormRef, 0)"
 								>添加</el-button
 							>
 						</div>
@@ -85,7 +96,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click.stop="PClass.settingRow(scope.row, 0)"
+							@click.stop="PClass.settingRow(ruleFormRef, scope.row, 0)"
 						>
 							修改
 						</el-button>
@@ -111,15 +122,13 @@ onMounted(() => {
 				style="padding-right: 20px"
 				:model="PClass.form"
 				v-loading="loading.loading1"
+				label-width="120px"
+				:rules="rules"
+				class="demo-ruleForm"
+				ref="ruleFormRef"
 			>
 				<el-form-item
-					:rules="[
-						{
-							required: true,
-							message: '请输入类型',
-							trigger: 'blur',
-						},
-					]"
+					prop="name"
 					:label="PClass.isClass ? '产品类型名称' : '品牌类型名称'"
 					label-width="120px"
 				>
@@ -196,7 +205,9 @@ onMounted(() => {
 						type="primary"
 						:loading="loading.loading2"
 						@click.stop="
-							PClass.isAdd ? PClass.createProduct() : PClass.updateProduct()
+							PClass.isAdd
+								? PClass.createProduct(ruleFormRef)
+								: PClass.updateProduct(ruleFormRef)
 						"
 					>
 						提交
@@ -273,7 +284,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="PClass.onAddItem(-1)"
+								@click.stop="PClass.onAddItem(ruleFormRef, -1)"
 								>添加</el-button
 							>
 						</div>
@@ -281,7 +292,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click.stop="PClass.settingRow(scope.row, -1)"
+							@click.stop="PClass.settingRow(ruleFormRef, scope.row, -1)"
 						>
 							修改
 						</el-button>
@@ -294,7 +305,10 @@ onMounted(() => {
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click.stop="PClass.handleCloseDetail">取消</el-button>
-					<el-button type="primary" @click.stop="PClass.handleCloseDetail">
+					<el-button
+						type="primary"
+						@click.stop="PClass.handleCloseDetail(ruleFormRef)"
+					>
 						确认
 					</el-button>
 				</span>

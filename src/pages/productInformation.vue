@@ -1,7 +1,17 @@
 <script setup lang="ts">
 import type { UploadFile, UploadProps, UploadFiles } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 const PInfor = createPinfor()
 const loading = createLoading()
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+	title: [{ required: true, message: '请输入产品标题', trigger: 'blur' }],
+	price: [{ required: true, message: '请输入产品价格', trigger: 'blur' }],
+	ptype: [{ required: true, message: '请选择产品所属品牌', trigger: 'change' }],
+	task_type_name: [
+		{ required: true, message: '请输入产品标题', trigger: 'blur' },
+	],
+})
 const filterTableInforData = computed(() =>
 	PInfor.productionTotList.filter(
 		(data: any) =>
@@ -71,7 +81,7 @@ onMounted(() => {
 						</div>
 					</template>
 				</el-table-column>
-				<el-table-column prop="price" label="产品价格" width="175">
+				<el-table-column prop="price" label="产品价格">
 					<template #default="scope">
 						<el-tag type="success">
 							{{ scope.row.price }}
@@ -116,7 +126,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="PInfor.settingRow(true)"
+								@click.stop="PInfor.settingRow(ruleFormRef, true)"
 								>添加</el-button
 							>
 						</div>
@@ -124,7 +134,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click.stop="PInfor.settingRow(false, scope.row)"
+							@click.stop="PInfor.settingRow(ruleFormRef, false, scope.row)"
 						>
 							修改
 						</el-button>
@@ -151,18 +161,12 @@ onMounted(() => {
 				style="padding-right: 20px"
 				:model="PInfor.form"
 				v-loading="loading.loading1"
+				label-width="120px"
+				:rules="rules"
+				class="demo-ruleForm"
+				ref="ruleFormRef"
 			>
-				<el-form-item
-					:rules="[
-						{
-							required: true,
-							message: '请输入产品标题',
-							trigger: 'blur',
-						},
-					]"
-					label="产品标题"
-					label-width="120px"
-				>
+				<el-form-item prop="title" label="产品标题">
 					<el-input
 						placeholder="请填写产品标题"
 						clearable
@@ -170,7 +174,7 @@ onMounted(() => {
 						autocomplete="off"
 					/>
 				</el-form-item>
-				<el-form-item label="产品所属品牌" label-width="120px">
+				<el-form-item prop="ptype" label="产品所属品牌">
 					<el-cascader
 						placeholder="请选择产品所属品牌"
 						clearable
@@ -180,7 +184,7 @@ onMounted(() => {
 						@change="handleChangePtype"
 					/>
 				</el-form-item>
-				<el-form-item label="产品配置" label-width="120px">
+				<el-form-item label="产品配置">
 					<el-input
 						placeholder="请填写产品配置"
 						clearable
@@ -188,17 +192,7 @@ onMounted(() => {
 						autocomplete="off"
 					/>
 				</el-form-item>
-				<el-form-item
-					:rules="[
-						{
-							required: true,
-							message: '请输入产品价格',
-							trigger: 'blur',
-						},
-					]"
-					label="产品价格"
-					label-width="120px"
-				>
+				<el-form-item prop="price" label="产品价格">
 					<el-input
 						placeholder="请填写产品价格"
 						clearable
@@ -206,7 +200,7 @@ onMounted(() => {
 						autocomplete="off"
 					/>
 				</el-form-item>
-				<el-form-item label="产品详情" label-width="120px">
+				<el-form-item label="产品详情">
 					<el-input
 						placeholder="请填写产品详情"
 						clearable
@@ -216,7 +210,7 @@ onMounted(() => {
 						:autosize="{ minRows: 4, maxRows: 6 }"
 					/>
 				</el-form-item>
-				<el-form-item label="上传图片" label-width="120px">
+				<el-form-item label="上传图片">
 					<el-upload
 						action="#"
 						v-model:file-list="PInfor.fileList"
@@ -266,7 +260,7 @@ onMounted(() => {
 					<el-button
 						type="primary"
 						:loading="loading.loading2"
-						@click.stop="PInfor.sumitForm"
+						@click.stop="PInfor.sumitForm(ruleFormRef)"
 					>
 						提交
 					</el-button>
