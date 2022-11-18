@@ -138,12 +138,14 @@ export default defineStore('PInfor', {
 			loading.loading = true
 			const res: any = await get('/admin/product/list', this.params)
 			console.log(res)
-			this.productionTotList = res.data.data ? res.data.data : []
-			this.isShowAdd = res.data.total > 20 ? true : false
-			this.totleProduction = res.data.total
-			await this.getPclassList()
+			if (res?.code == 200) {
+				this.productionTotList = res.data.data ? res.data.data : []
+				this.isShowAdd = res.data.total > 20 ? true : false
+				this.totleProduction = res.data.total
+				await this.getPclassList()
+				console.log(this.isShowAdd, 'this.isShowAdd')
+			}
 			loading.loading = false
-			console.log(this.isShowAdd, 'this.isShowAdd')
 		},
 		// 获取产品类型列表页
 		async getPclassList() {
@@ -151,31 +153,33 @@ export default defineStore('PInfor', {
 			loading.loading = true
 			const res: any = await get('/admin/product/types/list')
 			console.log(res)
-			let resData = res.data ? res.data : []
-			this.options = []
-			let list = resData.filter((i: any) => {
-				if (i.pid === 0) {
-					return i
-				}
-			})
-			list.forEach((element: any) => {
-				let data: any = resData.filter((i: any) => {
-					if (i.pid === element.id) {
-						return { value: i.id, label: i.title }
+			if (res?.code == 200) {
+				let resData = res.data ? res.data : []
+				this.options = []
+				let list = resData.filter((i: any) => {
+					if (i.pid === 0) {
+						return i
 					}
 				})
-				data.forEach((items: any) => {
-					items.value = items.id
-					items.label = items.title
+				list.forEach((element: any) => {
+					let data: any = resData.filter((i: any) => {
+						if (i.pid === element.id) {
+							return { value: i.id, label: i.title }
+						}
+					})
+					data.forEach((items: any) => {
+						items.value = items.id
+						items.label = items.title
+					})
+					this.options.push({
+						value: element.id,
+						label: element.title,
+						children: data,
+					})
 				})
-				this.options.push({
-					value: element.id,
-					label: element.title,
-					children: data,
-				})
-			})
-			this.options = this.addDisabledForStatus(this.options)
-			console.log(this.options, 'this.options')
+				this.options = this.addDisabledForStatus(this.options)
+				console.log(this.options, 'this.options')
+			}
 			loading.loading = false
 		},
 		async addMore() {
@@ -184,12 +188,14 @@ export default defineStore('PInfor', {
 			loading.loading = true
 			const res: any = await get('/admin/product/list', this.params)
 			console.log(res)
-			let resData = res.data.data ? res.data.data : []
-			if (resData.length > 0) {
-				this.productionTotList = this.productionTotList.concat(resData)
+			if (res?.code == 200) {
+				let resData = res.data.data ? res.data.data : []
+				if (resData.length > 0) {
+					this.productionTotList = this.productionTotList.concat(resData)
+				}
+				this.isShowAdd = resData.length > 20 ? true : false
+				console.log(this.productionTotList)
 			}
-			this.isShowAdd = resData.length > 20 ? true : false
-			console.log(this.productionTotList)
 			loading.loading = false
 		},
 		// 确认关闭

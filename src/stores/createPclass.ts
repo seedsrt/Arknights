@@ -53,24 +53,26 @@ export default defineStore('PClass', {
 			loading.loading = true
 			const res: any = await get('/admin/product/types/list')
 			// console.log(res)
-			let resData = res.data ? res.data : []
-			this.productionClassList = resData.filter((i: any) => {
-				if (i.pid === 0) {
-					return i
-				}
-			})
-			this.productionClassList.forEach((element: any) => {
-				this.productionTotList.push({
-					id: element.id,
-					pid: element.id,
-					name: element.title,
-					data: resData.filter((i: any) => {
-						if (i.pid === element.id) {
-							return i
-						}
-					}),
+			if (res?.code == 200) {
+				let resData = res.data ? res.data : []
+				this.productionClassList = resData.filter((i: any) => {
+					if (i.pid === 0) {
+						return i
+					}
 				})
-			})
+				this.productionClassList.forEach((element: any) => {
+					this.productionTotList.push({
+						id: element.id,
+						pid: element.id,
+						name: element.title,
+						data: resData.filter((i: any) => {
+							if (i.pid === element.id) {
+								return i
+							}
+						}),
+					})
+				})
+			}
 			// console.log(this.productionClassList, '产品类型')
 			// console.log(this.productionTotList, '产品总')
 			loading.loading = false
@@ -115,10 +117,12 @@ export default defineStore('PClass', {
 			// console.log(this.form.id, 'id')
 			loading.loading1 = true
 			const res: any = await get('/admin/product/types/show/' + item.id)
-			// console.log(res)
-			let resData = res.data ? res.data : {}
-			this.form.name = resData.title
-			if (resData.img_url) this.fileList = [{ url: resData.img_url }]
+			if (res?.code == 200) {
+				// console.log(res)
+				let resData = res.data ? res.data : {}
+				this.form.name = resData.title
+				if (resData.img_url) this.fileList = [{ url: resData.img_url }]
+			}
 			loading.loading1 = false
 		},
 		// 点击产品类型去品牌类型

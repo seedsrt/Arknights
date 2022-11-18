@@ -32,7 +32,7 @@ export default defineStore('asider', {
 		async loginOut() {
 			const res = await post('/admin/logout')
 			console.log(res)
-			if (res.code === 200) {
+			if (res?.code === 200) {
 				ElMessage({
 					message: '退出成功',
 					type: 'success',

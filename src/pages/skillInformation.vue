@@ -22,6 +22,15 @@ const filterTableInforData = computed(() =>
 			data.name.toLowerCase().includes(skillInfor.search.toLowerCase())
 	)
 )
+const handleSizeChange = (val: number) => {
+	console.log(`${val} items per page`)
+}
+const handleCurrentChange = (val: number) => {
+	console.log(`current page: ${val}`)
+}
+const currentPage = ref(4)
+const pageSize = ref(100)
+
 onMounted(() => {
 	skillInfor.getSkillInforList()
 	skillInfor.getProList()
@@ -98,6 +107,18 @@ onMounted(() => {
 				@click.stop="skillInfor.addMore"
 				>查看更多</el-button
 			>
+			<!-- <div class="demo-pagination-block">
+				<el-pagination
+					v-model:current-page="currentPage"
+					v-model:page-size="pageSize"
+					:page-sizes="[10, 20, 30, 40]"
+					:background="true"
+					layout="->, total, sizes, prev, pager, next, jumper"
+					:total="400"
+					@size-change="handleSizeChange"
+					@current-change="handleCurrentChange"
+				/>
+			</div> -->
 		</el-card>
 		<el-dialog
 			v-model="skillInfor.dialogFormVisible"
@@ -177,6 +198,15 @@ onMounted(() => {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
+}
+.demo-pagination-block {
+	margin: 10px 0;
+}
+.demo-pagination-block + .demo-pagination-block {
+	margin-top: 10px;
+}
+.demo-pagination-block .demonstration {
+	margin-bottom: 16px;
 }
 </style>
 <route lang="yaml">

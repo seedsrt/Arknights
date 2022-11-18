@@ -35,6 +35,12 @@ export default defineStore('skillInfor', {
 		}
 	},
 	actions: {
+		handleSizeChange(val: number) {
+			console.log(`${val} items per page`)
+		},
+		handleCurrentChange(val: number) {
+			console.log(`${val} items per page`)
+		},
 		// 设置级联选择器
 		addDisabledForStatus(arr: any) {
 			let newArr = JSON.parse(JSON.stringify(arr))
@@ -52,33 +58,35 @@ export default defineStore('skillInfor', {
 			const loading = createLoading()
 			loading.loading = true
 			const res: any = await get('/admin/product/types/list')
-			const resSkill: any = await post('/api/skillType')
+			const resSkill: any = await post('/admin/skillType')
 			console.log(res, '获取产品类型列表')
 			console.log(resSkill, '获取技能分类列表')
-			let resData = res.data ? res.data : []
-			this.optionsSkill = resSkill.data
-			let list = resData.filter((i: any) => {
-				if (i.pid === 0) {
-					return i
-				}
-			})
-			list.forEach((element: any) => {
-				let data: any = resData.filter((i: any) => {
-					if (i.pid === element.id) {
-						return { value: i.id, label: i.title }
+			if (res?.code == 200) {
+				let resData = res.data ? res.data : []
+				this.optionsSkill = resSkill.data
+				let list = resData.filter((i: any) => {
+					if (i.pid === 0) {
+						return i
 					}
 				})
-				data.forEach((items: any) => {
-					items.value = items.id
-					items.label = items.title
+				list.forEach((element: any) => {
+					let data: any = resData.filter((i: any) => {
+						if (i.pid === element.id) {
+							return { value: i.id, label: i.title }
+						}
+					})
+					data.forEach((items: any) => {
+						items.value = items.id
+						items.label = items.title
+					})
+					this.optionsProd.push({
+						value: element.id,
+						label: element.title,
+						children: data,
+					})
 				})
-				this.optionsProd.push({
-					value: element.id,
-					label: element.title,
-					children: data,
-				})
-			})
-			this.optionsProd = this.addDisabledForStatus(this.optionsProd)
+				this.optionsProd = this.addDisabledForStatus(this.optionsProd)
+			}
 			loading.loading = false
 		},
 		// 获取技能信息列表
@@ -89,9 +97,12 @@ export default defineStore('skillInfor', {
 			this.params.offset = 1
 			const res: any = await get('/admin/skills/list', this.params)
 			console.log(res, '获取技能信息列表')
-			let resData = res.data.data ? res.data.data : []
-			this.skillInforList = resData
-			this.isShowAdd = res.data?.total > 20 ? true : false
+			if (res?.code == 200) {
+				let resData = res.data.data ? res.data.data : []
+				this.skillInforList = resData
+				this.isShowAdd = res.data?.total > 20 ? true : false
+				this.totleProduction = res.data?.total
+			}
 			loading.loading = false
 		},
 		async addMore() {

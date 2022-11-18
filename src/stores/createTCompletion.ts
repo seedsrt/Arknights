@@ -67,7 +67,7 @@ export default defineStore('TCompletion', {
 					const loading = createLoading()
 					loading.loading1 = true
 					const res: any = this.isChangeTaskList
-						? await get('/admin/task/update_finishscore', {
+						? await get('/admin/task/update_finishscore', { 
 								task_finish_score_name: this.form.task_finish_score_name,
 								add_score: this.form.add_score,
 								need_finish_score: this.form.need_finish_score,
