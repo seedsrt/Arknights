@@ -12,9 +12,6 @@ export default defineStore('loading', {
 		}
 	},
 	actions: {
-		getDDD() {
-			console.log(this.loading)
-		},
 		reloadPart() {
 			this.isReloading = false
 			nextTick(() => {

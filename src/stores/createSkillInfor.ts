@@ -23,9 +23,11 @@ export default defineStore('skillInfor', {
 			// 获取技能信息列表参数
 			params: <any>{
 				offset: 1,
-				limit: 10,
+				limit: 20,
 				order: 'desc',
 			},
+			isShowAdd: false,
+			totleProduction: 0,
 			// 技能类型选择
 			optionsSkill: <any>[],
 			// 产品类型
@@ -83,9 +85,27 @@ export default defineStore('skillInfor', {
 		async getSkillInforList() {
 			const loading = createLoading()
 			loading.loading = true
+			this.totleProduction = 0
+			this.params.offset = 1
 			const res: any = await get('/admin/skills/list', this.params)
 			console.log(res, '获取技能信息列表')
-			this.skillInforList = res.data.data ? res.data.data : []
+			let resData = res.data.data ? res.data.data : []
+			this.skillInforList = resData
+			this.isShowAdd = res.data?.total > 20 ? true : false
+			loading.loading = false
+		},
+		async addMore() {
+			const loading = createLoading()
+			this.params.offset++
+			loading.loading = true
+			const res: any = await get('/admin/skills/list', this.params)
+			console.log(res)
+			let resData = res.data.data ? res.data.data : []
+			if (resData.length > 0) {
+				this.skillInforList = this.skillInforList.concat(resData)
+			}
+			this.isShowAdd = resData.length > 20 ? true : false
+			console.log(this.skillInforList)
 			loading.loading = false
 		},
 		// 点击修改、添加事件

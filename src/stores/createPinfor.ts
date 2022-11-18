@@ -20,7 +20,7 @@ export default defineStore('PInfor', {
 			},
 			params: <any>{
 				offset: 1,
-				limit: 10,
+				limit: 20,
 				order: 'desc',
 			},
 			totleProduction: 0,
@@ -64,7 +64,11 @@ export default defineStore('PInfor', {
 						: (data = undefined)
 					const res: any = this.isAdd
 						? await post('/admin/product/create', params, data)
-						: post('/admin/product/update/' + this.settingItem.id, params, data)
+						: await post(
+								'/admin/product/update/' + this.settingItem.id,
+								params,
+								data
+						  )
 					console.log(res)
 					if (res?.code == 200) {
 						ElMessage({
@@ -135,7 +139,7 @@ export default defineStore('PInfor', {
 			const res: any = await get('/admin/product/list', this.params)
 			console.log(res)
 			this.productionTotList = res.data.data ? res.data.data : []
-			this.isShowAdd = res.data.total > 10 ? true : false
+			this.isShowAdd = res.data.total > 20 ? true : false
 			this.totleProduction = res.data.total
 			await this.getPclassList()
 			loading.loading = false
@@ -184,7 +188,7 @@ export default defineStore('PInfor', {
 			if (resData.length > 0) {
 				this.productionTotList = this.productionTotList.concat(resData)
 			}
-			this.isShowAdd = resData.length > 10 ? true : false
+			this.isShowAdd = resData.length > 20 ? true : false
 			console.log(this.productionTotList)
 			loading.loading = false
 		},

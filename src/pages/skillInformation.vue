@@ -91,6 +91,13 @@ onMounted(() => {
 					</template>
 				</el-table-column>
 			</el-table>
+			<el-button
+				v-if="skillInfor.isShowAdd"
+				class="mt-4"
+				style="width: 100%"
+				@click.stop="skillInfor.addMore"
+				>查看更多</el-button
+			>
 		</el-card>
 		<el-dialog
 			v-model="skillInfor.dialogFormVisible"
