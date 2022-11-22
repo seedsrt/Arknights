@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia'
-import { get, post, del } from '~/api/api'
+import {
+	createSkills,
+	getSkillsList,
+	getSkillsDetail,
+	updateSkills,
+	deleteSkills,
+	getProductTypesList,
+	getSkillsTypes,
+} from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('skillInfor', {
 	state() {
@@ -57,8 +65,8 @@ export default defineStore('skillInfor', {
 		async getProList() {
 			const loading = createLoading()
 			loading.loading = true
-			const res: any = await get('/admin/product/types/list')
-			const resSkill: any = await post('/admin/skillType')
+			const res: any = await getProductTypesList()
+			const resSkill: any = await getSkillsTypes()
 			console.log(res, '获取产品类型列表')
 			console.log(resSkill, '获取技能分类列表')
 			if (res?.code == 200) {
@@ -95,7 +103,7 @@ export default defineStore('skillInfor', {
 			loading.loading = true
 			this.totleProduction = 0
 			this.params.offset = 1
-			const res: any = await get('/admin/skills/list', this.params)
+			const res: any = await getSkillsList(this.params)
 			console.log(res, '获取技能信息列表')
 			if (res?.code == 200) {
 				let resData = res.data.data ? res.data.data : []
@@ -109,7 +117,7 @@ export default defineStore('skillInfor', {
 			const loading = createLoading()
 			this.params.offset++
 			loading.loading = true
-			const res: any = await get('/admin/skills/list', this.params)
+			const res: any = await getSkillsList(this.params)
 			console.log(res)
 			let resData = res.data.data ? res.data.data : []
 			if (resData.length > 0) {
@@ -181,13 +189,13 @@ export default defineStore('skillInfor', {
 					const loading = createLoading()
 					loading.loading1 = true
 					const res: any = this.isChangeSkillInfor
-						? await post('/admin/skills/update/' + this.changeForm.id, {
+						? await updateSkills(this.changeForm.id, {
 								skill_type: this.form.skill_type,
 								ptype: this.form.ptype[1],
 								content: this.form.content,
 								status: this.form.status ? 1 : 0,
 						  }) // 修改
-						: await post('/admin/skills/create', {
+						: await createSkills({
 								skill_type: this.form.skill_type,
 								ptype: this.form.ptype[1],
 								content: this.form.content,
@@ -220,7 +228,7 @@ export default defineStore('skillInfor', {
 			)
 				.then(async () => {
 					loading.loading = true
-					const res: any = await del('/admin/skills/del/' + item.id)
+					const res: any = await deleteSkills(item.id)
 					console.log(res)
 					loading.loading = false
 					if (res?.code === 200) {

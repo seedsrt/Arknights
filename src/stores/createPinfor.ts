@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia'
-import { get, post, del } from '~/api/api'
+import {
+	createProduction,
+	getProductionList,
+	getProductTypesList,
+	getProductionDetail,
+	updateProduction,
+	deleteProduction,
+} from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('PInfor', {
 	state() {
@@ -11,12 +18,14 @@ export default defineStore('PInfor', {
 			fileList: <any>[],
 			settingItem: <any>{},
 			form: <any>{
-				title: '',
-				ptype: <any>[],
-				configuration: '',
-				price: '',
-				details: '',
-				status: 1,
+				title: '', // 标题
+				ptype: <any>[], // 产品类型ID
+				configuration: '', // 产品配置
+				configuration_para: <any>[], // 产品配置参数（json格式）
+				sprice: '', // 产品起始价格
+				eprice: '', // 产品最高价格
+				details: '', // 产品详情
+				status: 1, // 状态 1已审核 0未审核
 			},
 			params: <any>{
 				offset: 1,
@@ -44,6 +53,7 @@ export default defineStore('PInfor', {
 			})
 			return newArr
 		},
+
 		// 提交修改、添加表单
 		async sumitForm(formEl: FormInstance | undefined) {
 			if (!formEl) return
@@ -53,22 +63,20 @@ export default defineStore('PInfor', {
 						title: this.form.title,
 						ptype: this.form.ptype[1] ? this.form.ptype[1] : undefined,
 						configuration: this.form.configuration,
-						price: this.form.price,
+						configuration_para: JSON.stringify(this.form.configuration_para),
+						sprice: this.form.sprice,
+						eprice: this.form.eprice,
 						details: this.form.details,
 						status: 1,
 					}
-					console.log(this.form)
+					console.log(params, 'params')
 					let data: any = new FormData()
 					this.fileList[0]?.raw
 						? data.append('img_url', this.fileList[0]?.raw)
 						: (data = undefined)
 					const res: any = this.isAdd
-						? await post('/admin/product/create', params, data)
-						: await post(
-								'/admin/product/update/' + this.settingItem.id,
-								params,
-								data
-						  )
+						? await createProduction(params, data)
+						: await updateProduction(this.settingItem.id, params, data)
 					console.log(res)
 					if (res?.code == 200) {
 						ElMessage({
@@ -86,18 +94,23 @@ export default defineStore('PInfor', {
 				}
 			})
 		},
+
+		// 重置表单
 		resetForm() {
 			this.form = {
 				title: '',
-				ptype: [],
+				ptype: <any>[],
 				configuration: '',
-				price: '',
+				configuration_para: <any>[],
+				sprice: '',
+				eprice: '',
 				details: '',
 				status: 1,
 			}
 			this.settingItem = {}
 			this.fileList = []
 		},
+
 		// 点击修改、添加按钮
 		settingRow(
 			formEl: FormInstance | undefined,
@@ -121,14 +134,19 @@ export default defineStore('PInfor', {
 				this.form = {
 					title: item.title,
 					details: item.details,
-					price: item.price,
+					sprice: item.sprice,
+					eprice: item.eprice,
 					ptype: [PPid, item.ptype],
 					configuration: item.configuration,
+					configuration_para: item.configuration_para
+						? item.configuration_para
+						: [{ tit: '', price: '' }],
 				}
 				this.fileList = [{ url: item.img_url }]
 				this.settingItem = item
 			}
 		},
+
 		// 获取产品品牌列表页
 		async getPinforList() {
 			const loading = createLoading()
@@ -136,7 +154,7 @@ export default defineStore('PInfor', {
 			this.totleProduction = 0
 			this.params.offset = 1
 			loading.loading = true
-			const res: any = await get('/admin/product/list', this.params)
+			const res: any = await getProductionList(this.params)
 			console.log(res)
 			if (res?.code == 200) {
 				this.productionTotList = res.data.data ? res.data.data : []
@@ -147,11 +165,12 @@ export default defineStore('PInfor', {
 			}
 			loading.loading = false
 		},
+
 		// 获取产品类型列表页
 		async getPclassList() {
 			const loading = createLoading()
 			loading.loading = true
-			const res: any = await get('/admin/product/types/list')
+			const res: any = await getProductTypesList()
 			console.log(res)
 			if (res?.code == 200) {
 				let resData = res.data ? res.data : []
@@ -182,11 +201,13 @@ export default defineStore('PInfor', {
 			}
 			loading.loading = false
 		},
+
+		// 添加更多
 		async addMore() {
 			const loading = createLoading()
 			this.params.offset++
 			loading.loading = true
-			const res: any = await get('/admin/product/list', this.params)
+			const res: any = await getProductionList(this.params)
 			console.log(res)
 			if (res?.code == 200) {
 				let resData = res.data.data ? res.data.data : []
@@ -198,6 +219,7 @@ export default defineStore('PInfor', {
 			}
 			loading.loading = false
 		},
+
 		// 确认关闭
 		handleClose(done: () => void) {
 			ElMessageBox.confirm('确定要取消吗？', '警告', {
@@ -210,6 +232,7 @@ export default defineStore('PInfor', {
 				})
 				.catch(() => {})
 		},
+
 		// 删除产品
 		deleteRow(item: any) {
 			const loading = createLoading()
@@ -221,7 +244,7 @@ export default defineStore('PInfor', {
 			})
 				.then(async () => {
 					loading.loading = true
-					const res: any = await del('/admin/product/del/' + item.id)
+					const res: any = await deleteProduction(item.id)
 					console.log(res)
 					loading.loading = false
 					if (res?.code == 200) {

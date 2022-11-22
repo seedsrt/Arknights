@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { router } from '~/modules/router'
-import { post } from '~/api/api'
+import { logout } from '~/api/globalApi'
 export default defineStore('asider', {
 	state() {
 		return {
@@ -8,7 +8,7 @@ export default defineStore('asider', {
 			isCollapse: false,
 			asideActive: '/',
 			title: '主页',
-			breadcrumb: [],
+			breadcrumb: <any>[],
 		}
 	},
 	actions: {
@@ -30,7 +30,7 @@ export default defineStore('asider', {
 			})
 		},
 		async loginOut() {
-			const res = await post('/admin/logout')
+			const res = await logout()
 			console.log(res)
 			if (res?.code === 200) {
 				ElMessage({

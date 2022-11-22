@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { post } from '~/api/api'
+import { login } from '~/api/globalApi'
 import { router } from '~/modules/router'
 
 export default defineStore('login', {
@@ -19,7 +19,7 @@ export default defineStore('login', {
 			const loading = createLoading()
 			const aside = createAside()
 			loading.loading = true
-			const res: any = await post('/admin/login', this.form)
+			const res: any = await login(this.form)
 			console.log(res, '登录')
 			if (res?.code == 200) {
 				localStorage.setItem(
@@ -27,7 +27,7 @@ export default defineStore('login', {
 					res.data.access_token ? res.data.access_token : ''
 				)
 				aside.asideActive = '/'
-				aside.breadcrumb = []
+				aside.breadcrumb = ['/']
 				aside.isCollapse = false
 				aside.title = '主页'
 				ElMessage({

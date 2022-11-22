@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
-import { get } from '~/api/api'
+import {
+	updateTaskTypes,
+	getTaskTypesList,
+	addTaskTypes,
+	deleteTaskTypes,
+} from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('TClass', {
 	state() {
@@ -31,8 +36,8 @@ export default defineStore('TClass', {
 					console.log(this.form, this.isChangeTaskClass)
 					loading.loading1 = true
 					const res: any = this.isChangeTaskClass
-						? await get('/admin/task/update_tasktype', this.form) // 修改
-						: await get('/admin/task/add_tasktype', {
+						? await updateTaskTypes(this.form) // 修改
+						: await addTaskTypes({
 								task_type_name: this.form.task_type_name,
 						  }) // 添加
 					console.log(res, '提交修改、更改表单')
@@ -53,7 +58,7 @@ export default defineStore('TClass', {
 			const loading = createLoading()
 			loading.loading = true
 			this.TClassList = []
-			const res: any = await get('/admin/task/get_tasktype')
+			const res: any = await getTaskTypesList()
 			console.log(res, '任务类型列表')
 			this.TClassList = res.data ? res.data : []
 			loading.loading = false
@@ -111,7 +116,7 @@ export default defineStore('TClass', {
 			)
 				.then(async () => {
 					loading.loading = true
-					const res: any = await get('/admin/task/del_tasktype', {
+					const res: any = await deleteTaskTypes({
 						task_type: item.task_type,
 					})
 					console.log(res, '删除是否成功')

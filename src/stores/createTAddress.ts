@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
-import { get } from '~/api/api'
+import {
+	getTaskAddresses,
+	addTaskAddresses,
+	updateTaskAddresses,
+	deleteTaskAddresses,
+} from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('TAddress', {
 	state() {
@@ -26,7 +31,7 @@ export default defineStore('TAddress', {
 		async getTaskAddressList() {
 			const loading = createLoading()
 			loading.loading = true
-			const res: any = await get('/admin/task/get_addresses')
+			const res: any = await getTaskAddresses()
 			console.log(res, '获取任务地址列表')
 			this.TAddressList = res.data ? res.data : []
 			loading.loading = false
@@ -82,13 +87,13 @@ export default defineStore('TAddress', {
 					const loading = createLoading()
 					loading.loading1 = true
 					const res: any = this.isChangeTaskAddress
-						? await get('/admin/task/update_addresses', {
+						? await updateTaskAddresses({
 								url_name: this.form.url_name,
 								task_url: this.form.task_url,
 								finish_task_url: this.form.finish_task_url,
 								taid: this.changeForm.taid,
 						  }) // 修改
-						: await get('/admin/task/add_addresses', {
+						: await addTaskAddresses({
 								url_name: this.form.url_name,
 								task_url: this.form.task_url,
 								finish_task_url: this.form.finish_task_url,
@@ -121,7 +126,7 @@ export default defineStore('TAddress', {
 			)
 				.then(async () => {
 					loading.loading = true
-					const res: any = await get('/admin/task/del_addresses', {
+					const res: any = await deleteTaskAddresses({
 						taid: item.taid,
 					})
 					console.log(res)

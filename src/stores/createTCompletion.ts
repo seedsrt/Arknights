@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
-import { get, post } from '~/api/api'
+import {
+	getFinishScore,
+	addFinishScore,
+	updateFinishScore,
+	deleteFinishScore,
+} from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('TCompletion', {
 	state() {
@@ -29,7 +34,7 @@ export default defineStore('TCompletion', {
 			const loading = createLoading()
 			loading.loading = true
 			this.TCompletionList = []
-			const res: any = await get('/admin/task/get_finishscore')
+			const res: any = await getFinishScore()
 			console.log(res, '获取任务完成度列表')
 			this.TCompletionList = res.data ? res.data : []
 			loading.loading = false
@@ -67,14 +72,14 @@ export default defineStore('TCompletion', {
 					const loading = createLoading()
 					loading.loading1 = true
 					const res: any = this.isChangeTaskList
-						? await get('/admin/task/update_finishscore', { 
+						? await updateFinishScore({
 								task_finish_score_name: this.form.task_finish_score_name,
 								add_score: this.form.add_score,
 								need_finish_score: this.form.need_finish_score,
 								sort: this.form.sort,
 								tfid: this.changeForm.tfid,
 						  }) // 修改
-						: await get('/admin/task/add_finishscore', {
+						: await addFinishScore({
 								task_finish_score_name: this.form.task_finish_score_name,
 								add_score: this.form.add_score,
 								need_finish_score: this.form.need_finish_score,
@@ -127,7 +132,7 @@ export default defineStore('TCompletion', {
 			)
 				.then(async () => {
 					loading.loading = true
-					const res: any = await get('/admin/task/del_finishscore', {
+					const res: any = await deleteFinishScore({
 						tfid: item.tfid,
 					})
 					console.log(res)

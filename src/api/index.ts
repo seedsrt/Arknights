@@ -40,7 +40,8 @@ class RequestHttp {
 	public constructor(config: AxiosRequestConfig) {
 		// 实例化axios
 		this.service = axios.create(config)
-		this.service.defaults.headers.post['Content-Type'] = 'multipart/form-data'
+		this.service.defaults.headers.post['Content-Type'] =
+			'application/x-www-form-urlencoded'
 		/**
 		 * 请求拦截器
 		 * 客户端发送请求 -> [请求拦截器] -> 服务器
@@ -48,13 +49,20 @@ class RequestHttp {
 		 */
 		this.service.interceptors.request.use(
 			(config: AxiosRequestConfig) => {
-				const token = localStorage.getItem('token') || ''
+				let token: any = localStorage.getItem('token') || ''
+				console.log(config, 'config')
+				if (config.url == '/admin/login') {
+					token = null
+				}
 				NProgress.start()
+				console.log(token, 'token')
+				if (token) {
+					config.headers = {
+						Authorization: 'Bearer ' + token,
+					}
+				}
 				return {
 					...config,
-					headers: {
-						Authorization: 'Bearer ' + token, // 请求头中携带token信息
-					},
 				}
 			},
 			(error: AxiosError) => {
@@ -104,9 +112,14 @@ class RequestHttp {
 				return data
 			},
 			(error: AxiosError) => {
+				const loading = createLoading()
 				const { response } = error
 				if (response) {
 					NProgress.done()
+					loading.loading = false
+					loading.loading1 = false
+					loading.loading2 = false
+					loading.loading3 = false
 					this.handleCode(response.status)
 				}
 				if (!window.navigator.onLine) {

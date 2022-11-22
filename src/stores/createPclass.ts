@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { get, post, del } from '~/api/api'
+import {
+	createProductTypes,
+	getProductTypesList,
+	getProductTypesDetail,
+	updateProductTypes,
+	deleteProductTypes,
+} from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('PClass', {
 	state() {
@@ -51,7 +57,7 @@ export default defineStore('PClass', {
 		async getPclassList() {
 			const loading = createLoading()
 			loading.loading = true
-			const res: any = await get('/admin/product/types/list')
+			const res: any = await getProductTypesList()
 			// console.log(res)
 			if (res?.code == 200) {
 				let resData = res.data ? res.data : []
@@ -88,7 +94,7 @@ export default defineStore('PClass', {
 			})
 				.then(async () => {
 					loading.loading = true
-					const res: any = await del('/admin/product/types/del/' + item.id)
+					const res: any = await deleteProductTypes(item.id)
 					// console.log(res)
 					this.refshBrand(item.pid)
 					loading.loading = false
@@ -116,7 +122,7 @@ export default defineStore('PClass', {
 			// console.log(item)
 			// console.log(this.form.id, 'id')
 			loading.loading1 = true
-			const res: any = await get('/admin/product/types/show/' + item.id)
+			const res: any = await getProductTypesDetail(item.id)
 			if (res?.code == 200) {
 				// console.log(res)
 				let resData = res.data ? res.data : {}
@@ -198,7 +204,7 @@ export default defineStore('PClass', {
 						? data.append('img_url', this.fileList[0]?.raw)
 						: (data = undefined)
 					// // console.log(data)
-					const res = await post('/admin/product/types/create', params, data)
+					const res = await createProductTypes(params, data)
 					// // console.log(res)
 					if (res?.code == 200) {
 						this.refshBrand(this.form.id)
@@ -228,8 +234,8 @@ export default defineStore('PClass', {
 						? data.append('img_url', this.fileList[0]?.raw)
 						: (data = undefined)
 					// console.log(data)
-					const res = await post(
-						'/admin/product/types/update/' + this.settingItem.id,
+					const res = await updateProductTypes(
+						this.settingItem.id,
 						params,
 						data
 					)

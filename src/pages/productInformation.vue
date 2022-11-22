@@ -4,9 +4,25 @@ import type { FormInstance, FormRules } from 'element-plus'
 const PInfor = createPinfor()
 const loading = createLoading()
 const ruleFormRef = ref<FormInstance>()
+
+const removeDomain = (item: any) => {
+	const index = PInfor.form.configuration_para.indexOf(item)
+
+	if (index !== -1) {
+		PInfor.form.configuration_para.splice(index, 1)
+	}
+}
+const addDomain = () => {
+	console.log(PInfor.form, 'form')
+	PInfor.form.configuration_para.push({
+		tit: '',
+		price: '',
+	})
+}
 const rules = reactive<FormRules>({
 	title: [{ required: true, message: '请输入产品标题', trigger: 'blur' }],
-	price: [{ required: true, message: '请输入产品价格', trigger: 'blur' }],
+	sprice: [{ required: true, message: '请输入产品起始价格', trigger: 'blur' }],
+	eprice: [{ required: true, message: '请输入产品起始价格', trigger: 'blur' }],
 	ptype: [{ required: true, message: '请选择产品所属品牌', trigger: 'change' }],
 	task_type_name: [
 		{ required: true, message: '请输入产品标题', trigger: 'blur' },
@@ -19,37 +35,13 @@ const filterTableInforData = computed(() =>
 			data.title.toLowerCase().includes(PInfor.search.toLowerCase())
 	)
 )
-const options = [
-	{
-		value: 'guide',
-		label: 'Guide',
-		children: [
-			{
-				value: 'disciplines',
-				label: 'Disciplines',
-			},
-			{
-				value: 'disciplines',
-				label: 'Disciplines',
-			},
-		],
-	},
-]
-const handleChangePtype = (value: any) => {
-	console.log(value)
-}
 const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
 	ElMessage.warning(`至多只能上传1张图片`)
-}
-const handleChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-	console.log(uploadFile, 'uploadFile')
-	console.log(uploadFiles, 'uploadFiles')
 }
 const handleRemove = (file: UploadFile) => {
 	PInfor.fileList = []
 	console.log(file)
 }
-
 const handlePictureCardPreview = (file: UploadFile) => {
 	PInfor.dialogImageUrl = file.url!
 	PInfor.dialogVisible = true
@@ -84,7 +76,9 @@ onMounted(() => {
 				<el-table-column prop="price" label="产品价格">
 					<template #default="scope">
 						<el-tag type="success">
-							{{ scope.row.price }}
+							￥{{ scope.row.sprice }}
+							<span v-if="scope.row.eprice"> - ￥{{ scope.row.eprice }}</span>
+							<span v-else>起</span>
 						</el-tag>
 					</template>
 				</el-table-column>
@@ -181,7 +175,6 @@ onMounted(() => {
 						v-model="PInfor.form.ptype"
 						:options="PInfor.options"
 						:props="{ expandTrigger: 'hover' }"
-						@change="handleChangePtype"
 					/>
 				</el-form-item>
 				<el-form-item label="产品配置">
@@ -192,14 +185,64 @@ onMounted(() => {
 						autocomplete="off"
 					/>
 				</el-form-item>
-				<el-form-item prop="price" label="产品价格">
-					<el-input
-						placeholder="请填写产品价格"
-						clearable
-						v-model="PInfor.form.price"
-						autocomplete="off"
-					/>
-				</el-form-item>
+				<div style="max-height: 120px; overflow-y: scroll">
+					<el-form-item
+						v-for="(domain, index) in PInfor.form.configuration_para"
+						:key="index"
+						:label="'配置' + (index + 1)"
+						:prop="'domains.' + index + '.price'"
+					>
+						<div style="display: flex">
+							<el-input
+								clearable
+								autocomplete="off"
+								v-model="domain.tit"
+								style="width: 220px; margin-right: 10px"
+								placeholder="请填写配置参数"
+							/>
+							<el-input
+								clearable
+								autocomplete="off"
+								v-model="domain.price"
+								style="width: 140px"
+								type="number"
+								placeholder="请填写配置价格"
+							/>
+							<el-button
+								class="ml-2"
+								type="danger"
+								@click.prevent="removeDomain(domain)"
+								>删除</el-button
+							>
+						</div>
+					</el-form-item>
+				</div>
+				<el-button
+					type="primary"
+					@click="addDomain"
+					class="m-5px ml-120px mb-18px"
+					>添加配置</el-button
+				>
+				<div style="display: flex">
+					<el-form-item prop="sprice" label="起始价格">
+						<el-input
+							style="width: 120px"
+							placeholder="请填写起始价格"
+							clearable
+							v-model="PInfor.form.sprice"
+							autocomplete="off"
+						/>
+					</el-form-item>
+					<el-form-item prop="eprice" label="最高价格">
+						<el-input
+							style="width: 120px"
+							placeholder="请填写最高价格"
+							clearable
+							v-model="PInfor.form.eprice"
+							autocomplete="off"
+						/>
+					</el-form-item>
+				</div>
 				<el-form-item label="产品详情">
 					<el-input
 						placeholder="请填写产品详情"
@@ -212,13 +255,13 @@ onMounted(() => {
 				</el-form-item>
 				<el-form-item label="上传图片">
 					<el-upload
+						class="avatar-uploader"
 						action="#"
 						v-model:file-list="PInfor.fileList"
 						list-type="picture-card"
 						:limit="1"
 						:on-exceed="handleExceed"
 						:auto-upload="false"
-						:on-change="handleChange"
 					>
 						<span>
 							<i style="font-size: 35px" class="iconfont icon-tianjia"></i>
@@ -279,6 +322,19 @@ onMounted(() => {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
+}
+.avatar-uploader .avatar {
+	width: 100px;
+	height: 100px;
+	display: block;
+}
+</style>
+<style>
+.el-upload-list--picture-card {
+	--el-upload-list-picture-card-size: 100px;
+}
+.el-upload--picture-card {
+	--el-upload-picture-card-size: 100px;
 }
 </style>
 <route lang="yaml">

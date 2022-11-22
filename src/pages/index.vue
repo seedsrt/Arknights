@@ -2,9 +2,14 @@
 import dayjs from 'dayjs'
 const TList = createTList()
 const time = ref(new Date())
+const aside = createAside()
 let timer: any = null
 onMounted(() => {
 	TList.getTaskClassList()
+	aside.asideActive = '/'
+	aside.breadcrumb = ['/']
+	aside.isCollapse = false
+	aside.title = '主页'
 	timer = setInterval(() => {
 		time.value = new Date()
 	}, 1000)

@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia'
-import { get, post } from '~/api/api'
+import {
+	getTaskAddresses,
+	getTaskList,
+	addTaskList,
+	updateTaskList,
+	deleteTaskList,
+	getTaskTypesList,
+} from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('TList', {
 	state() {
@@ -35,13 +42,13 @@ export default defineStore('TList', {
 	actions: {
 		// 获取任务分类
 		async getTaskClassList() {
-			const res: any = await get('/admin/task/get_tasktype')
+			const res: any = await getTaskTypesList()
 			console.log(res, '任务分类选项列表')
 			this.taskClassList = res.data ? res.data : []
 		},
 		// 获取任务地址
 		async getTaskAddressList() {
-			const res: any = await get('/admin/task/get_addresses')
+			const res: any = await getTaskAddresses()
 			console.log(res, '任务地址选项列表')
 			this.taskAddressList = res.data ? res.data : []
 		},
@@ -50,7 +57,7 @@ export default defineStore('TList', {
 			const loading = createLoading()
 			loading.loading = true
 			this.TList = []
-			const res: any = await get('/admin/task/get_task')
+			const res: any = await getTaskList()
 			console.log(res, '任务列表')
 			this.TList = res.data ? res.data : []
 			await this.getTaskClassList()
@@ -95,7 +102,7 @@ export default defineStore('TList', {
 					const loading = createLoading()
 					loading.loading1 = true
 					const res: any = this.isChangeTaskList
-						? await get('/admin/task/update_task', {
+						? await updateTaskList({
 								task_name: this.form.task_name,
 								task_type: this.form.task_type,
 								task_url: this.form.task_url,
@@ -107,7 +114,7 @@ export default defineStore('TList', {
 								finish_score: this.form.finish_score,
 								tid: this.changeForm.tid,
 						  }) // 修改
-						: await get('/admin/task/add_task', {
+						: await addTaskList({
 								task_name: this.form.task_name,
 								task_type: this.form.task_type,
 								task_url: this.form.task_url,
@@ -170,7 +177,7 @@ export default defineStore('TList', {
 			)
 				.then(async () => {
 					loading.loading = true
-					const res: any = await get('/admin/task/del_tasktype', {
+					const res: any = await deleteTaskList({
 						tid: item.tid,
 					})
 					console.log(res)

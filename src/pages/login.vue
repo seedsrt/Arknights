@@ -81,7 +81,7 @@ onMounted(() => {
 						</el-input>
 						<div class="captchaImg">
 							<img
-								style="cursor: pointer"
+								style="cursor: pointer; width: 120px"
 								:src="login.captchaImg"
 								@click="login.getCaptcha"
 								alt="验证码"
