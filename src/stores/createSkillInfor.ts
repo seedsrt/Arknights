@@ -41,9 +41,39 @@ export default defineStore('skillInfor', {
 			optionsSkill: <any>[],
 			// 产品类型
 			optionsProd: <any>[],
+			timer: <any>'',
+			// 上传语音列表
+			fileList: <any>[],
+			dialogImageUrl: '',
+			dialogVisible: false,
+			disabled: false,
 		}
 	},
 	actions: {
+		// 搜索
+		searchDetail() {
+			if (this.timer) {
+				clearTimeout(this.timer)
+			}
+			this.timer = setTimeout(async () => {
+				const loading = createLoading()
+				this.skillInforList = []
+				loading.loading2 = true
+				const res: any = await getSkillsList({
+					...this.params,
+					title: this.search,
+				})
+				console.log(res)
+				if (res?.code == 200) {
+					this.skillInforList = res.data.data ? res.data.data : []
+					this.isShowAdd = res.data.total > 20 ? true : false
+					this.total = res.data.total
+					console.log(this.isShowAdd, 'this.isShowAdd')
+				}
+				loading.loading2 = false
+				console.log(this.search)
+			}, 300)
+		},
 		// 更换每页条数
 		handleSizeChange(val: number) {
 			this.params.offset = 1
@@ -144,6 +174,9 @@ export default defineStore('skillInfor', {
 					content: item.content,
 					status: item.status == 1 ? true : false,
 				}
+				this.fileList = item.img_url
+					? [{ url: item.img_url, name: '语音文件' }]
+					: []
 				console.log(this.form, '点击添加')
 			}
 			this.dialogFormVisible = true
@@ -157,6 +190,7 @@ export default defineStore('skillInfor', {
 				content: '',
 				status: true,
 			}
+			this.fileList = []
 		},
 		// 关闭对话框
 		handleClose(done: () => void) {
@@ -174,25 +208,37 @@ export default defineStore('skillInfor', {
 		},
 		// 提交、修改表单
 		async onSubmit(formEl: FormInstance | undefined) {
+			console.log(this.fileList)
 			if (!formEl) return
 			await formEl.validate(async (valid: any, fields: any) => {
 				if (valid) {
 					console.log(this.form)
 					const loading = createLoading()
 					loading.loading1 = true
+					let data: any = new FormData()
+					this.fileList[0]?.raw
+						? data.append('img_url', this.fileList[0]?.raw)
+						: (data = undefined)
 					const res: any = this.isChangeSkillInfor
-						? await updateSkills(this.changeForm.id, {
-								skill_type: this.form.skill_type,
-								ptype: this.form.ptype[1],
-								content: this.form.content,
-								status: this.form.status ? 1 : 0,
-						  }) // 修改
-						: await createSkills({
-								skill_type: this.form.skill_type,
-								ptype: this.form.ptype[1],
-								content: this.form.content,
-								status: this.form.status ? 1 : 0,
-						  }) // 添加
+						? await updateSkills(
+								this.changeForm.id,
+								{
+									skill_type: this.form.skill_type,
+									ptype: this.form.ptype[1],
+									content: this.form.content,
+									status: this.form.status ? 1 : 0,
+								},
+								data
+						  ) // 修改
+						: await createSkills(
+								{
+									skill_type: this.form.skill_type,
+									ptype: this.form.ptype[1],
+									content: this.form.content,
+									status: this.form.status ? 1 : 0,
+								},
+								data
+						  ) // 添加
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
 						ElMessage.success(this.isChangeSkillInfor ? '修改成功' : '添加成功')

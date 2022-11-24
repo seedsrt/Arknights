@@ -25,6 +25,7 @@
     "createPinia": true,
     "createReactiveFn": true,
     "createReport": true,
+    "createReportAdmin": true,
     "createRole": true,
     "createSharedComposable": true,
     "createSkillInfor": true,

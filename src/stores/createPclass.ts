@@ -181,10 +181,9 @@ export default defineStore('PClass', {
 				})
 		},
 		// 确认关闭品牌类型
-		handleCloseDetail(formEl: FormInstance | undefined) {
+		handleCloseDetail() {
 			this.dialogFormVisibleDetail = false
 			this.searchDetail = ''
-			formEl?.clearValidate()
 			this.productionBrandList = []
 		},
 		// 提交添加

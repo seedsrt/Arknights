@@ -174,8 +174,8 @@ export function getSkillsTypes() {
 }
 
 // 创建技能信息
-export function createSkills(params: object) {
-	return post('/admin/skills/create', params)
+export function createSkills(params: object, data: object) {
+	return post('/admin/skills/create', params, data)
 }
 
 // 技能信息列表
@@ -189,8 +189,12 @@ export function getSkillsDetail(skillsId: number | string) {
 }
 
 // 修改产品
-export function updateSkills(skillsId: number | string, params: object) {
-	return post('/admin/skills/update/' + skillsId, params)
+export function updateSkills(
+	skillsId: number | string,
+	params: object,
+	data: object
+) {
+	return post('/admin/skills/update/' + skillsId, params, data)
 }
 
 // 删除产品
@@ -232,7 +236,29 @@ export function updateUser(params?: object) {
 
 // -------------------------------------------------------------------
 
-// 修改用户资料
+// 报告列表
 export function getReportList(params?: object) {
 	return get('/admin/report/list', params)
+}
+
+// -------------------------------------------------------------------
+
+export function getSummarysList(params?: object) {
+	return get('/admin/summarys/list', params)
+}
+
+export function addSummarys(params?: object, data?: object) {
+	return post('/admin/summarys/create', params, data)
+}
+
+export function updateSummarys(id: number, params?: object, data?: object) {
+	return post('/admin/summarys/update/' + id, params, data)
+}
+
+export function delSummarys(id: number) {
+	return del('/admin/summarys/del/' + id)
+}
+
+export function sendSummarysList(id?: number) {
+	return get('/admin/summarys/send', { id: id })
 }

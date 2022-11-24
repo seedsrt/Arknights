@@ -67,6 +67,9 @@
 				<el-menu-item-group>
 					<el-menu-item index="/report">报告管理</el-menu-item>
 				</el-menu-item-group>
+				<el-menu-item-group>
+					<el-menu-item index="/reportByAdmin">管理员报告管理</el-menu-item>
+				</el-menu-item-group>
 			</el-sub-menu>
 		</el-menu>
 	</div>

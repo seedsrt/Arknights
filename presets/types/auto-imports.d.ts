@@ -26,6 +26,7 @@ declare global {
   const createPinia: typeof import('pinia')['createPinia']
   const createReactiveFn: typeof import('@vueuse/core')['createReactiveFn']
   const createReport: typeof import('../../src/stores/createReport')['default']
+  const createReportAdmin: typeof import('../../src/stores/createReportAdmin')['default']
   const createRole: typeof import('../../src/stores/createRole')['default']
   const createSharedComposable: typeof import('@vueuse/core')['createSharedComposable']
   const createSkillInfor: typeof import('../../src/stores/createSkillInfor')['default']

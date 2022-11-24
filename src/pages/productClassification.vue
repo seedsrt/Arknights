@@ -304,13 +304,8 @@ onMounted(() => {
 			</el-table>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click.stop="PClass.handleCloseDetail(ruleFormRef)"
-						>取消</el-button
-					>
-					<el-button
-						type="primary"
-						@click.stop="PClass.handleCloseDetail(ruleFormRef)"
-					>
+					<el-button @click.stop="PClass.handleCloseDetail">取消</el-button>
+					<el-button type="primary" @click.stop="PClass.handleCloseDetail">
 						确认
 					</el-button>
 				</span>
@@ -326,6 +321,7 @@ onMounted(() => {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	cursor: pointer;
 	background-color: var(--el-fill-color-light);
 }
 
@@ -341,30 +337,6 @@ onMounted(() => {
 }
 .iconfont {
 	font-size: 20px;
-}
-.imageHover {
-	position: relative;
-}
-.imageHover:hover {
-	.imageHover-actions {
-		opacity: 1;
-	}
-}
-.imageHover-actions {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	left: 0;
-	top: 0;
-	cursor: default;
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	color: #fff;
-	opacity: 0;
-	font-size: 20px;
-	background-color: var(--el-overlay-color-lighter);
-	transition: opacity var(--el-transition-duration);
 }
 </style>
 <route lang="yaml">

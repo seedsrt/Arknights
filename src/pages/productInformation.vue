@@ -7,8 +7,7 @@ const ruleFormRef = ref<FormInstance>()
 
 const removeDomain = (item: any) => {
 	const index = PInfor.form.configuration_para.indexOf(item)
-
-	if (index !== -1) {
+	if (index !== 0) {
 		PInfor.form.configuration_para.splice(index, 1)
 	}
 }
@@ -21,20 +20,14 @@ const addDomain = () => {
 }
 const rules = reactive<FormRules>({
 	title: [{ required: true, message: '请输入产品标题', trigger: 'blur' }],
-	sprice: [{ required: true, message: '请输入产品起始价格', trigger: 'blur' }],
-	eprice: [{ required: true, message: '请输入产品起始价格', trigger: 'blur' }],
 	ptype: [{ required: true, message: '请选择产品所属品牌', trigger: 'change' }],
+	configuration: [
+		{ required: true, message: '请输入产品配置', trigger: 'blur' },
+	],
 	task_type_name: [
 		{ required: true, message: '请输入产品标题', trigger: 'blur' },
 	],
 })
-const filterTableInforData = computed(() =>
-	PInfor.productionTotList.filter(
-		(data: any) =>
-			!PInfor.search ||
-			data.title.toLowerCase().includes(PInfor.search.toLowerCase())
-	)
-)
 const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
 	ElMessage.warning(`至多只能上传1张图片`)
 }
@@ -59,7 +52,7 @@ onMounted(() => {
 				ref="multipleTableRef"
 				table-layout="auto"
 				size="large"
-				:data="filterTableInforData"
+				:data="PInfor.productionTotList"
 				stripe
 				style="width: auto"
 				max-height="680px"
@@ -85,22 +78,28 @@ onMounted(() => {
 				</el-table-column>
 				<el-table-column prop="img_url" label="产品图" width="200">
 					<template #default="scope">
-						<el-image
-							style="height: 100px"
-							class="imageHover"
-							:preview-teleported="true"
-							:src="scope.row.img_url"
-							:previewSrcList="[scope.row.img_url]"
-							fit="contain"
-						>
-							<template #error>
-								<div class="image-slot">
-									<el-icon>
-										<i class="iconfont icon-24gl-pictureSplit"></i>
-									</el-icon>
-								</div>
-							</template>
-						</el-image>
+						<div class="imageHover">
+							<el-image
+								style="
+									display: flex;
+									justify-content: center;
+									align-items: center;
+									height: 100px;
+								"
+								:preview-teleported="true"
+								:src="scope.row.img_url"
+								:previewSrcList="[scope.row.img_url]"
+								fit="contain"
+							>
+								<template #error>
+									<div class="image-slot">
+										<el-icon>
+											<i class="iconfont icon-24gl-pictureSplit"></i>
+										</el-icon>
+									</div>
+								</template>
+							</el-image>
+						</div>
 					</template>
 				</el-table-column>
 
@@ -108,6 +107,8 @@ onMounted(() => {
 					<template #header>
 						<div style="display: flex; justify-content: space-between">
 							<el-input
+								v-loading="loading.loading2"
+								@input="PInfor.searchDetail"
 								v-model="PInfor.search"
 								style="width: 75%"
 								clearable
@@ -178,7 +179,7 @@ onMounted(() => {
 						:props="{ expandTrigger: 'hover' }"
 					/>
 				</el-form-item>
-				<el-form-item label="产品配置">
+				<el-form-item prop="configuration" label="产品配置">
 					<el-input
 						placeholder="请填写产品配置"
 						clearable
@@ -191,7 +192,12 @@ onMounted(() => {
 						v-for="(domain, index) in PInfor.form.configuration_para"
 						:key="index"
 						:label="'配置' + (index + 1)"
-						:prop="'domains.' + index + '.price'"
+						:prop="'configuration_para[' + index + '].tit'"
+						:rules="{
+							required: true,
+							message: '请填写配置参数',
+							trigger: 'blur',
+						}"
 					>
 						<div style="display: flex">
 							<el-input
@@ -201,14 +207,24 @@ onMounted(() => {
 								style="width: 220px; margin-right: 10px"
 								placeholder="请填写配置参数"
 							/>
-							<el-input
-								clearable
-								autocomplete="off"
-								v-model="domain.price"
-								style="width: 140px"
-								type="number"
-								placeholder="请填写配置价格"
-							/>
+							<el-form-item
+								:key="index"
+								:prop="'configuration_para[' + index + '].price'"
+								:rules="{
+									required: true,
+									message: '请填写配置价格',
+									trigger: 'blur',
+								}"
+							>
+								<el-input
+									clearable
+									autocomplete="off"
+									v-model="domain.price"
+									style="width: 140px"
+									type="number"
+									placeholder="请填写配置价格"
+								/>
+							</el-form-item>
 							<el-button
 								class="ml-2"
 								type="danger"
@@ -224,7 +240,7 @@ onMounted(() => {
 					class="m-5px ml-120px mb-18px"
 					>添加配置</el-button
 				>
-				<div style="display: flex">
+				<!-- <div style="display: flex">
 					<el-form-item prop="sprice" label="起始价格">
 						<el-input
 							style="width: 120px"
@@ -243,7 +259,7 @@ onMounted(() => {
 							autocomplete="off"
 						/>
 					</el-form-item>
-				</div>
+				</div> -->
 				<el-form-item label="产品详情">
 					<el-input
 						placeholder="请填写产品详情"
@@ -329,6 +345,45 @@ onMounted(() => {
 	height: 100px;
 	display: block;
 }
+.image-slot {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	background-color: var(--el-fill-color-light);
+}
+
+.el-icon.avatar-uploader-icon {
+	font-size: 28px;
+	color: #8c939d;
+	width: 178px;
+	height: 178px;
+	text-align: center;
+	.iconfont {
+		font-size: 20px;
+	}
+}
+.iconfont {
+	font-size: 20px;
+}
+// .imageHover-actions {
+// 	position: absolute;
+// 	width: 100%;
+// 	height: 100%;
+// 	left: 0;
+// 	top: 0;
+// 	cursor: default;
+// 	display: inline-flex;
+// 	justify-content: center;
+// 	align-items: center;
+// 	color: #fff;
+// 	opacity: 0;
+// 	font-size: 20px;
+// 	background-color: var(--el-overlay-color-lighter);
+// 	transition: opacity var(--el-transition-duration);
+// }
 </style>
 <style>
 .el-upload-list--picture-card {

@@ -41,6 +41,7 @@ declare module 'vue-router/auto/routes' {
     '/productClassification': RouteRecordInfo<'/productClassification', '/productClassification', Record<never, never>, Record<never, never>>,
     '/productInformation': RouteRecordInfo<'/productInformation', '/productInformation', Record<never, never>, Record<never, never>>,
     '/report': RouteRecordInfo<'/report', '/report', Record<never, never>, Record<never, never>>,
+    '/reportByAdmin': RouteRecordInfo<'/reportByAdmin', '/reportByAdmin', Record<never, never>, Record<never, never>>,
     '/role': RouteRecordInfo<'/role', '/role', Record<never, never>, Record<never, never>>,
     '/skillInformation': RouteRecordInfo<'/skillInformation', '/skillInformation', Record<never, never>, Record<never, never>>,
     '/taskAddress': RouteRecordInfo<'/taskAddress', '/taskAddress', Record<never, never>, Record<never, never>>,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { UploadFile, UploadProps } from 'element-plus'
 import dayjs from 'dayjs'
 import type { FormInstance, FormRules } from 'element-plus'
 const skillInfor = createSkillInfor()
@@ -15,13 +16,28 @@ const rules = reactive<FormRules>({
 	content: [{ required: true, message: '请填写技能信息内容', trigger: 'blur' }],
 	status: [{ required: true, message: '是否审核', trigger: 'blur' }],
 })
-const filterTableInforData = computed(() =>
-	skillInfor.skillInforList.filter(
-		(data: any) =>
-			!skillInfor.search ||
-			data.name.toLowerCase().includes(skillInfor.search.toLowerCase())
-	)
-)
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+	ElMessage.warning(`至多只能上传一个文件`)
+}
+
+const changeFile = (file: any, fileList: any) => {
+	console.log('file', file, fileList)
+	if (file.raw.type !== 'audio/mpeg') {
+		ElMessage.error('只能上传mp3') //限制文件类型
+		skillInfor.fileList = []
+		return false
+	} else {
+		return true
+	}
+}
+const handleRemove = (file: UploadFile) => {
+	skillInfor.fileList = []
+	console.log(file)
+}
+const handlePictureCardPreview = (file: UploadFile) => {
+	skillInfor.dialogImageUrl = file.url!
+	skillInfor.dialogVisible = true
+}
 onMounted(() => {
 	skillInfor.getSkillInforList()
 	skillInfor.getProList()
@@ -35,7 +51,7 @@ onMounted(() => {
 				ref="multipleTableRef"
 				table-layout="auto"
 				size="large"
-				:data="filterTableInforData"
+				:data="skillInfor.skillInforList"
 				stripe
 				style="width: auto"
 				max-height="680px"
@@ -65,6 +81,8 @@ onMounted(() => {
 					<template #header>
 						<div style="display: flex; justify-content: space-between">
 							<el-input
+								v-loading="loading.loading2"
+								@input="skillInfor.searchDetail"
 								v-model="skillInfor.search"
 								style="width: 75%"
 								clearable
@@ -156,6 +174,27 @@ onMounted(() => {
 				</el-form-item>
 				<el-form-item prop="status" label="是否审核">
 					<el-switch v-model="skillInfor.form.status" />
+				</el-form-item>
+				<el-form-item label="上传语音">
+					<el-upload
+						class="avatar-uploader"
+						action="#"
+						v-model:file-list="skillInfor.fileList"
+						:limit="1"
+						:auto-upload="false"
+						:on-exceed="handleExceed"
+						:on-change="changeFile"
+						list-type="text"
+						accept=".mp3"
+					>
+						<el-button type="primary">点击上传</el-button>
+						<template #tip>
+							<div class="el-upload__tip">仅允许上传一个文件，仅限mp3</div>
+						</template>
+					</el-upload>
+					<el-dialog v-model="skillInfor.dialogVisible">
+						<img w-full :src="skillInfor.dialogImageUrl" alt="Preview Image" />
+					</el-dialog>
 				</el-form-item>
 			</el-form>
 			<template #footer>

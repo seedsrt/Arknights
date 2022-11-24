@@ -69,12 +69,12 @@ onMounted(() => {
 							scope.row.score
 						}}</el-tag>
 						<el-tag
-							v-else-if="scope.row.score > 0 && scope.row.score > 200"
+							v-else-if="scope.row.score > 0 && scope.row.score < 500"
 							class="ml-2"
-							type="success"
+							type="warning"
 							>{{ scope.row.score }}</el-tag
 						>
-						<el-tag v-else class="ml-2" type="warning">{{
+						<el-tag v-else class="ml-2" type="success">{{
 							scope.row.score
 						}}</el-tag>
 					</template>

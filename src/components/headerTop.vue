@@ -31,9 +31,9 @@ const drawer1 = ref(false)
 						<i class="iconfont icon-24gl-tags"> </i>
 					</el-badge>
 				</div>
-				<div class="open-aside">
+				<!-- <div class="open-aside">
 					<i class="iconfont icon-quanping"> </i>
-				</div>
+				</div> -->
 				<el-dropdown>
 					<span class="el-dropdown-link">
 						<div class="header-box">

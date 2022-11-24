@@ -21,7 +21,12 @@ export default defineStore('PInfor', {
 				title: '', // 标题
 				ptype: <any>[], // 产品类型ID
 				configuration: '', // 产品配置
-				configuration_para: <any>[], // 产品配置参数（json格式）
+				configuration_para: <any>[
+					{
+						tit: undefined,
+						price: NaN,
+					},
+				], // 产品配置参数（json格式）
 				sprice: '', // 产品起始价格
 				eprice: '', // 产品最高价格
 				details: '', // 产品详情
@@ -38,9 +43,34 @@ export default defineStore('PInfor', {
 			dialogVisible: false,
 			disabled: false,
 			options: <any>[],
+			timer: <any>'',
 		}
 	},
 	actions: {
+		// 搜索
+		searchDetail() {
+			if (this.timer) {
+				clearTimeout(this.timer)
+			}
+			this.timer = setTimeout(async () => {
+				const loading = createLoading()
+				this.productionTotList = []
+				loading.loading2 = true
+				const res: any = await getProductionList({
+					...this.params,
+					title: this.search,
+				})
+				console.log(res)
+				if (res?.code == 200) {
+					this.productionTotList = res.data.data ? res.data.data : []
+					this.isShowAdd = res.data.total > 20 ? true : false
+					this.total = res.data.total
+					console.log(this.isShowAdd, 'this.isShowAdd')
+				}
+				loading.loading2 = false
+				console.log(this.search)
+			}, 300)
+		},
 		// 更换每页条数
 		handleSizeChange(val: number) {
 			this.params.offset = 1
@@ -72,13 +102,21 @@ export default defineStore('PInfor', {
 			if (!formEl) return
 			await formEl.validate(async (valid: any, fields: any) => {
 				if (valid) {
+					this.form.configuration_para = this.form.configuration_para.sort(
+						(a: any, b: any) => {
+							return a.price - b.price
+						}
+					)
 					const params = {
 						title: this.form.title,
 						ptype: this.form.ptype[1] ? this.form.ptype[1] : undefined,
 						configuration: this.form.configuration,
 						configuration_para: JSON.stringify(this.form.configuration_para),
-						sprice: this.form.sprice,
-						eprice: this.form.eprice,
+						sprice: this.form.configuration_para[0].price,
+						eprice:
+							this.form.configuration_para[
+								this.form.configuration_para.length - 1
+							].price,
 						details: this.form.details,
 						status: 1,
 					}
@@ -114,7 +152,12 @@ export default defineStore('PInfor', {
 				title: '',
 				ptype: <any>[],
 				configuration: '',
-				configuration_para: <any>[],
+				configuration_para: [
+					{
+						tit: undefined,
+						price: NaN,
+					},
+				],
 				sprice: '',
 				eprice: '',
 				details: '',
@@ -155,7 +198,7 @@ export default defineStore('PInfor', {
 						? item.configuration_para
 						: [{ tit: '', price: '' }],
 				}
-				this.fileList = [{ url: item.img_url }]
+				this.fileList = item.img_url ? [{ url: item.img_url }] : []
 				this.settingItem = item
 			}
 		},
@@ -209,24 +252,6 @@ export default defineStore('PInfor', {
 				})
 				this.options = this.addDisabledForStatus(this.options)
 				console.log(this.options, 'this.options')
-			}
-			loading.loading = false
-		},
-
-		// 添加更多
-		async addMore() {
-			const loading = createLoading()
-			this.params.offset++
-			loading.loading = true
-			const res: any = await getProductionList(this.params)
-			console.log(res)
-			if (res?.code == 200) {
-				let resData = res.data.data ? res.data.data : []
-				if (resData.length > 0) {
-					this.productionTotList = this.productionTotList.concat(resData)
-				}
-				this.isShowAdd = resData.length > 20 ? true : false
-				console.log(this.productionTotList)
 			}
 			loading.loading = false
 		},

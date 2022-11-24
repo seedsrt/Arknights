@@ -11,13 +11,7 @@ const rules = reactive<FormRules>({
 	name: [{ required: true, message: '请输入用户名称', trigger: 'blur' }],
 	role: [{ required: true, message: '请输入用户角色', trigger: 'blur' }],
 })
-const filterTableInforData = computed(() =>
-	report.reportList.filter(
-		(data: any) =>
-			!report.search ||
-			data.name.toLowerCase().includes(report.search.toLowerCase())
-	)
-)
+
 onMounted(() => {
 	report.getUserList()
 })
@@ -30,7 +24,7 @@ onMounted(() => {
 				ref="multipleTableRef"
 				table-layout="auto"
 				size="large"
-				:data="filterTableInforData"
+				:data="report.reportList"
 				stripe
 				style="width: auto"
 				max-height="680px"
@@ -65,6 +59,8 @@ onMounted(() => {
 					<template #header>
 						<div style="display: flex; justify-content: space-between">
 							<el-input
+								v-loading="loading.loading2"
+								@input="report.searchDetail"
 								style="width: 75%"
 								v-model="report.search"
 								clearable

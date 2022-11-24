@@ -18,9 +18,31 @@ export default defineStore('Report', {
 			search: '',
 			// 点击表格详情数据
 			details: <any>{},
+			timer: <any>'',
 		}
 	},
 	actions: {
+		// 搜索
+		searchDetail() {
+			if (this.timer) {
+				clearTimeout(this.timer)
+			}
+			this.timer = setTimeout(async () => {
+				const loading = createLoading()
+				this.reportList = []
+				loading.loading2 = true
+				const res: any = await getReportList({
+					...this.params,
+					title: this.search,
+				})
+				console.log(res)
+				if (res?.code == 200) {
+					this.reportList = res.data.data ? res.data.data : []
+					this.total = res.data.total
+				}
+				loading.loading2 = false
+			}, 300)
+		},
 		//获取用户报告列表
 		async getUserList() {
 			const loading = createLoading()
