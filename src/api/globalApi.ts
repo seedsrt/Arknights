@@ -197,3 +197,42 @@ export function updateSkills(skillsId: number | string, params: object) {
 export function deleteSkills(skillsId: number | string) {
 	return del('/admin/skills/del/' + skillsId)
 }
+
+// -------------------------------------------------------------------
+
+// 获取角色
+export function getRoleList() {
+	return get('/admin/role/get')
+}
+
+// 添加角色
+export function addRole(params: object) {
+	return get('/admin/role/add', params)
+}
+
+// 修改角色
+export function updateRole(params: object) {
+	return get('/admin/role/update', params)
+}
+
+// 删除角色
+export function delRole(params: object) {
+	return get('/admin/role/del', params)
+}
+
+// 查询用户
+export function getUser() {
+	return get('/admin/role/select_user')
+}
+
+// 修改用户资料
+export function updateUser(params?: object) {
+	return get('/admin/role/update_user', params)
+}
+
+// -------------------------------------------------------------------
+
+// 修改用户资料
+export function getReportList(params?: object) {
+	return get('/admin/report/list', params)
+}

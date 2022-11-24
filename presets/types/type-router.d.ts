@@ -40,11 +40,14 @@ declare module 'vue-router/auto/routes' {
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/productClassification': RouteRecordInfo<'/productClassification', '/productClassification', Record<never, never>, Record<never, never>>,
     '/productInformation': RouteRecordInfo<'/productInformation', '/productInformation', Record<never, never>, Record<never, never>>,
+    '/report': RouteRecordInfo<'/report', '/report', Record<never, never>, Record<never, never>>,
+    '/role': RouteRecordInfo<'/role', '/role', Record<never, never>, Record<never, never>>,
     '/skillInformation': RouteRecordInfo<'/skillInformation', '/skillInformation', Record<never, never>, Record<never, never>>,
     '/taskAddress': RouteRecordInfo<'/taskAddress', '/taskAddress', Record<never, never>, Record<never, never>>,
     '/taskClassification': RouteRecordInfo<'/taskClassification', '/taskClassification', Record<never, never>, Record<never, never>>,
     '/taskCompletion': RouteRecordInfo<'/taskCompletion', '/taskCompletion', Record<never, never>, Record<never, never>>,
     '/taskList': RouteRecordInfo<'/taskList', '/taskList', Record<never, never>, Record<never, never>>,
+    '/user': RouteRecordInfo<'/user', '/user', Record<never, never>, Record<never, never>>,
   }
 }
 

@@ -6,6 +6,7 @@ import {
 	updateTaskList,
 	deleteTaskList,
 	getTaskTypesList,
+	getRoleList,
 } from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('TList', {
@@ -28,6 +29,7 @@ export default defineStore('TList', {
 				end_time: '', // 任务时间,时间为0为长期 必须明天之后的时间戳
 				sort: '', // 排序 值越大越排在前面
 				finish_score: undefined, // 完成度
+				role: undefined, // 用户角色id
 			},
 			// 任务列表
 			TList: <any>[],
@@ -37,19 +39,27 @@ export default defineStore('TList', {
 			taskClassList: <any>[],
 			// 任务地址选项列表
 			taskAddressList: <any>[],
+			// 角色选项列表
+			roleList: <any>[],
 		}
 	},
 	actions: {
+		// 获取角色列表
+		async getRoleList() {
+			const res: any = await getRoleList()
+			console.log(res, '获取角色列表')
+			this.roleList = res.data ? res.data : []
+		},
 		// 获取任务分类
 		async getTaskClassList() {
 			const res: any = await getTaskTypesList()
-			console.log(res, '任务分类选项列表')
+			console.log(res, '获取任务分类')
 			this.taskClassList = res.data ? res.data : []
 		},
 		// 获取任务地址
 		async getTaskAddressList() {
 			const res: any = await getTaskAddresses()
-			console.log(res, '任务地址选项列表')
+			console.log(res, '获取任务地址')
 			this.taskAddressList = res.data ? res.data : []
 		},
 		//获取任务列表
@@ -62,6 +72,7 @@ export default defineStore('TList', {
 			this.TList = res.data ? res.data : []
 			await this.getTaskClassList()
 			await this.getTaskAddressList()
+			await this.getRoleList()
 			loading.loading = false
 		},
 		// 重置表单内容
@@ -77,6 +88,7 @@ export default defineStore('TList', {
 				end_time: '',
 				sort: '',
 				finish_score: undefined,
+				role: undefined,
 			}
 		},
 		// 关闭对话框
@@ -113,6 +125,7 @@ export default defineStore('TList', {
 								sort: this.form.sort,
 								finish_score: this.form.finish_score,
 								tid: this.changeForm.tid,
+								role: this.form.role,
 						  }) // 修改
 						: await addTaskList({
 								task_name: this.form.task_name,
@@ -124,13 +137,14 @@ export default defineStore('TList', {
 								end_time: this.form.end_time / 1000,
 								sort: this.form.sort,
 								finish_score: this.form.finish_score,
+								role: this.form.role,
 						  }) // 添加
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
 						ElMessage.success(this.isChangeTaskList ? '修改成功' : '添加成功')
+						this.dialogFormVisible = false
 						this.resetForm()
 						await this.getTaskList()
-						this.dialogFormVisible = false
 					}
 					loading.loading1 = false
 				} else {
@@ -158,6 +172,7 @@ export default defineStore('TList', {
 					end_time: item.end_time === 0 ? 0 : item.end_time * 1000,
 					sort: item.sort,
 					finish_score: item.finish_score,
+					role: item.role,
 				}
 				console.log(item, '点击添加')
 			}

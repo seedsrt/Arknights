@@ -36,6 +36,8 @@ export default defineStore('login', {
 				})
 				this.form = { name: '', password: '', captcha: '' }
 				router.push('/')
+			} else {
+				this.getCaptcha
 			}
 			loading.loading = false
 		},

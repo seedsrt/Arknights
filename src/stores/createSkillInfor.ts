@@ -31,11 +31,12 @@ export default defineStore('skillInfor', {
 			// 获取技能信息列表参数
 			params: <any>{
 				offset: 1,
-				limit: 20,
+				limit: 10,
 				order: 'desc',
 			},
 			isShowAdd: false,
-			totleProduction: 0,
+			// 总共数
+			total: 0,
 			// 技能类型选择
 			optionsSkill: <any>[],
 			// 产品类型
@@ -43,11 +44,18 @@ export default defineStore('skillInfor', {
 		}
 	},
 	actions: {
+		// 更换每页条数
 		handleSizeChange(val: number) {
-			console.log(`${val} items per page`)
+			this.params.offset = 1
+			this.params.limit = val
+			this.getSkillInforList()
+			console.log(`${val} 更换每页条数`)
 		},
+		// 更换当前页数
 		handleCurrentChange(val: number) {
-			console.log(`${val} items per page`)
+			this.params.offset = val
+			this.getSkillInforList()
+			console.log(`${val} 更换当前页数`)
 		},
 		// 设置级联选择器
 		addDisabledForStatus(arr: any) {
@@ -101,30 +109,14 @@ export default defineStore('skillInfor', {
 		async getSkillInforList() {
 			const loading = createLoading()
 			loading.loading = true
-			this.totleProduction = 0
-			this.params.offset = 1
 			const res: any = await getSkillsList(this.params)
 			console.log(res, '获取技能信息列表')
 			if (res?.code == 200) {
 				let resData = res.data.data ? res.data.data : []
 				this.skillInforList = resData
 				this.isShowAdd = res.data?.total > 20 ? true : false
-				this.totleProduction = res.data?.total
+				this.total = res.data?.total
 			}
-			loading.loading = false
-		},
-		async addMore() {
-			const loading = createLoading()
-			this.params.offset++
-			loading.loading = true
-			const res: any = await getSkillsList(this.params)
-			console.log(res)
-			let resData = res.data.data ? res.data.data : []
-			if (resData.length > 0) {
-				this.skillInforList = this.skillInforList.concat(resData)
-			}
-			this.isShowAdd = resData.length > 20 ? true : false
-			console.log(this.skillInforList)
 			loading.loading = false
 		},
 		// 点击修改、添加事件
@@ -204,9 +196,9 @@ export default defineStore('skillInfor', {
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
 						ElMessage.success(this.isChangeSkillInfor ? '修改成功' : '添加成功')
+						this.dialogFormVisible = false
 						this.resetForm()
 						await this.getSkillInforList()
-						this.dialogFormVisible = false
 					}
 					loading.loading1 = false
 				} else {

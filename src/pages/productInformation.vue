@@ -48,6 +48,7 @@ const handlePictureCardPreview = (file: UploadFile) => {
 }
 onMounted(() => {
 	PInfor.getPinforList()
+	PInfor.getPclassList()
 })
 </script>
 
@@ -85,12 +86,7 @@ onMounted(() => {
 				<el-table-column prop="img_url" label="产品图" width="200">
 					<template #default="scope">
 						<el-image
-							style="
-								display: flex;
-								justify-content: center;
-								align-items: center;
-								height: 100px;
-							"
+							style="height: 100px"
 							class="imageHover"
 							:preview-teleported="true"
 							:src="scope.row.img_url"
@@ -138,13 +134,18 @@ onMounted(() => {
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-button
-				v-if="PInfor.isShowAdd"
-				class="mt-4"
-				style="width: 100%"
-				@click.stop="PInfor.addMore"
-				>查看更多</el-button
-			>
+			<div class="demo-pagination-block">
+				<el-pagination
+					v-model:current-page="PInfor.params.offset"
+					v-model:page-size="PInfor.params.limit"
+					:page-sizes="[10, 20, 30, 40]"
+					:background="true"
+					layout="->, total, sizes, prev, pager, next, jumper"
+					:total="PInfor.total"
+					@size-change="PInfor.handleSizeChange"
+					@current-change="PInfor.handleCurrentChange"
+				/>
+			</div>
 		</el-card>
 		<el-dialog
 			v-model="PInfor.dialogFormVisible"
@@ -335,6 +336,15 @@ onMounted(() => {
 }
 .el-upload--picture-card {
 	--el-upload-picture-card-size: 100px;
+}
+.demo-pagination-block {
+	margin: 10px 0;
+}
+.demo-pagination-block + .demo-pagination-block {
+	margin-top: 10px;
+}
+.demo-pagination-block .demonstration {
+	margin-bottom: 16px;
 }
 </style>
 <route lang="yaml">

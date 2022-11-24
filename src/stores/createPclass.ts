@@ -160,7 +160,6 @@ export default defineStore('PClass', {
 			// console.log(item, '添加')
 		},
 		resetForm() {
-			this.dialogFormVisible = false
 			this.form.name = ''
 			this.form.id = 0
 			this.settingForm.name = ''
@@ -173,6 +172,7 @@ export default defineStore('PClass', {
 				type: 'warning',
 			})
 				.then(() => {
+					this.dialogFormVisible = false
 					this.resetForm()
 					done()
 				})
@@ -181,9 +181,10 @@ export default defineStore('PClass', {
 				})
 		},
 		// 确认关闭品牌类型
-		handleCloseDetail() {
+		handleCloseDetail(formEl: FormInstance | undefined) {
 			this.dialogFormVisibleDetail = false
 			this.searchDetail = ''
+			formEl?.clearValidate()
 			this.productionBrandList = []
 		},
 		// 提交添加
@@ -204,13 +205,13 @@ export default defineStore('PClass', {
 						? data.append('img_url', this.fileList[0]?.raw)
 						: (data = undefined)
 					// // console.log(data)
-					const res = await createProductTypes(params, data)
-					// // console.log(res)
+					const res: any = await createProductTypes(params, data)
+					console.log(res)
 					if (res?.code == 200) {
+						this.dialogFormVisible = false
 						this.refshBrand(this.form.id)
 						this.fileList = []
 						this.form.name = ''
-						this.dialogFormVisible = false
 					}
 					loading.loading2 = false
 				} else {
@@ -234,7 +235,7 @@ export default defineStore('PClass', {
 						? data.append('img_url', this.fileList[0]?.raw)
 						: (data = undefined)
 					// console.log(data)
-					const res = await updateProductTypes(
+					const res: any = await updateProductTypes(
 						this.settingItem.id,
 						params,
 						data

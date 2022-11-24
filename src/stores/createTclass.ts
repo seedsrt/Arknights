@@ -43,9 +43,9 @@ export default defineStore('TClass', {
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
 						ElMessage.success(this.isChangeTaskClass ? '修改成功' : '添加成功')
+						this.dialogFormVisible = false
 						this.resetForm()
 						await this.getTaskClassList()
-						this.dialogFormVisible = false
 					}
 					loading.loading1 = false
 				} else {

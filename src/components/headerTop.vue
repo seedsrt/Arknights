@@ -122,6 +122,7 @@ const drawer1 = ref(false)
 		transition: all 0.2s;
 		border-top: 2px solid transparent;
 		.userHeader {
+			display: block;
 			width: 40px;
 			height: 40px;
 			border-radius: 40px;

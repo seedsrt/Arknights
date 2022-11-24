@@ -1,181 +1,124 @@
-import axios, {
-	AxiosInstance,
-	AxiosError,
-	AxiosRequestConfig,
-	AxiosResponse,
-} from 'axios'
-import NProgress from 'nprogress'
+/**
+ * axios封装
+ * 请求拦截、响应拦截、错误统一处理
+ */
+import axios from 'axios'
 import { router } from '~/modules/router'
-// 数据返回的接口
-// 定义请求响应参数，不含data
-interface Result {
-	code: number
-	msg: string
+import { ElMessage } from 'element-plus'
+import NProgress from 'nprogress'
+// 第一个代理基础路径配置
+const loading = createLoading()
+//axios.defaults.baseURL = 'https://api.noechou.cn/';
+// 环境的切换
+
+axios.defaults.baseURL = import.meta.env['VITE_APP_BASE_API']
+/**
+ * 跳转登录页
+ * 携带当前页面路由，以期在登录页面完成登录后返回当前页面
+ */
+const toLogin = () => {
+	router.replace({
+		path: '/login',
+	})
 }
 
-// 请求响应参数，包含data
-interface ResultData<T = any> extends Result {
-	data?: T
-}
-const URL: string = import.meta.env['VITE_APP_BASE_API']
-
-enum RequestEnums {
-	TIMEOUT = 200000,
-	OVERDUE = 600, // 登录失效
-	FAIL = 400, // 请求失败
-	SUCCESS = 200, // 请求成功
-}
-const config = {
-	// 默认地址
-	baseURL: URL as string,
-	// 设置超时时间
-	timeout: RequestEnums.TIMEOUT as number,
-	// 跨域时候允许携带凭证
-	withCredentials: true,
-}
-
-class RequestHttp {
-	// 定义成员变量并指定类型
-	service: AxiosInstance
-	public constructor(config: AxiosRequestConfig) {
-		// 实例化axios
-		this.service = axios.create(config)
-		this.service.defaults.headers.post['Content-Type'] =
-			'application/x-www-form-urlencoded'
-		/**
-		 * 请求拦截器
-		 * 客户端发送请求 -> [请求拦截器] -> 服务器
-		 * token校验(JWT) : 接受服务器返回的token,存储到vuex/pinia/本地储存当中
-		 */
-		this.service.interceptors.request.use(
-			(config: AxiosRequestConfig) => {
-				let token: any = localStorage.getItem('token') || ''
-				console.log(config, 'config')
-				if (config.url == '/admin/login') {
-					token = null
-				}
-				NProgress.start()
-				console.log(token, 'token')
-				if (token) {
-					config.headers = {
-						Authorization: 'Bearer ' + token,
-					}
-				}
-				return {
-					...config,
-				}
-			},
-			(error: AxiosError) => {
-				// 请求报错
-				NProgress.done()
-				Promise.reject(error)
-			}
-		)
-
-		/**
-		 * 响应拦截器
-		 * 服务器换返回信息 -> [拦截统一处理] -> 客户端JS获取到信息
-		 */
-		this.service.interceptors.response.use(
-			(response: AxiosResponse) => {
-				const { data, config } = response // 解构
-				const loading = createLoading()
-				if (data.code === RequestEnums.OVERDUE) {
-					ElMessage.error(data.msg)
-					// 登录信息失效，应跳转到登录页面，并清空本地的token
-					localStorage.setItem('token', '')
-					loading.loading = false
-					loading.loading1 = false
-					loading.loading2 = false
-					loading.loading3 = false
-					NProgress.done()
-					router.replace({
-						path: '/login',
-					})
-					return Promise.reject(data)
-				}
-				// 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
-				if (data.code && data.code !== RequestEnums.SUCCESS) {
-					if (data.msg == '验证码错误！') {
-						const login = createLogin()
-						login.getCaptcha()
-					}
-					ElMessage.error(data.msg) // 此处也可以使用组件提示报错信息
-					NProgress.done()
-					loading.loading = false
-					loading.loading1 = false
-					loading.loading2 = false
-					loading.loading3 = false
-					return Promise.reject(data)
-				}
-				NProgress.done()
-				return data
-			},
-			(error: AxiosError) => {
-				const loading = createLoading()
-				const { response } = error
-				if (response) {
-					NProgress.done()
-					loading.loading = false
-					loading.loading1 = false
-					loading.loading2 = false
-					loading.loading3 = false
-					this.handleCode(response.status)
-				}
-				if (!window.navigator.onLine) {
-					ElMessage.error('网络连接失败')
-					// 可以跳转到错误页面，也可以不做操作
-					NProgress.done()
-					return router.replace({
-						path: '/404',
-					})
-				}
-			}
-		)
+/**
+ * 请求失败后的错误统一处理
+ * @param {Number} status 请求失败的状态码
+ */
+const errorHandle = (status: number, other: any) => {
+	// 状态码判断
+	switch (status) {
+		case 600:
+			ElMessage.error('未登录，请先登录')
+			localStorage.removeItem('token')
+			toLogin()
+			break
+		// 403 token过期
+		// 清除token并跳转登录页
+		case 403:
+			ElMessage.error('token已过期')
+			localStorage.removeItem('token')
+			toLogin()
+			break
+		// 404请求不存在
+		case 404:
+			ElMessage.error('404，请求不存在')
+			router.replace({
+				path: '/404',
+			})
+			break
+		default:
+			ElMessage.error(other.data.msg)
+			console.log(other)
 	}
-	handleCode(code: number): void {
-		switch (code) {
-			case 401:
-				ElMessage.error('登录失败，请重新登录')
-				break
-			default:
-				ElMessage.error('请求失败')
-				break
+}
+
+// 创建axios实例
+var instance = axios.create({
+	timeout: 1000 * 12,
+})
+// 设置post请求头
+instance.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+/**
+ * 请求拦截器
+ * 每次请求前，如果存在token则在请求头中携带token
+ */
+instance.interceptors.request.use(
+	(config: any) => {
+		// 登录流程控制中，根据本地是否存在token判断用户的登录情况
+		// 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token
+		// 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
+		//而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
+		const token = localStorage.getItem('token')
+		token && (config.headers.Authorization = 'Bearer ' + token)
+		NProgress.start()
+		return config
+	},
+	(error) => Promise.resolve(error)
+)
+
+// 响应拦截器
+instance.interceptors.response.use(
+	// 请求成功
+	(res) => {
+		if (res.data.msg == '验证码错误！') {
+			const login = createLogin()
+			login.getCaptcha()
+		}
+		if (res.data.code == 200) {
+			Promise.resolve(res)
+		} else {
+			errorHandle(res.data.code, res)
+		}
+		NProgress.done()
+		return res.data
+	},
+
+	// 请求失败
+	(error) => {
+		const { response } = error
+		loading.loading = false
+		loading.loading1 = false
+		loading.loading2 = false
+		loading.loading3 = false
+		NProgress.done()
+		if (response) {
+			// 请求已发出，但是不在2xx的范围
+			errorHandle(response.status, response.data.ElMessage)
+			return Promise.reject(response)
+		} else {
+			// 处理断网的情况
+			// eg:请求超时或断网时，更新state的network状态
+			// network状态在app.vue中控制着一个全局的断网提示组件的显示隐藏
+			// 关于断网组件中的刷新重新获取数据，会在断网组件中说明
+			if (!window.navigator.onLine) {
+				//store.commit('changeNetwork', false);
+			} else {
+				return Promise.reject(error)
+			}
 		}
 	}
+)
 
-	// 常用方法封装
-	get<T>(url: string, params?: object): Promise<ResultData<T>> {
-		return this.service({
-			method: 'GET',
-			url: url,
-			params: params,
-		})
-	}
-	post<T>(url: string, params?: object, data?: object): Promise<ResultData<T>> {
-		return this.service({
-			method: 'POST',
-			url: url,
-			params: params,
-			data: data,
-		})
-	}
-	put<T>(url: string, params?: object, data?: object): Promise<ResultData<T>> {
-		return this.service({
-			method: 'PUT',
-			url: url,
-			params: params,
-			data: data,
-		})
-	}
-	delete<T>(url: string, params?: object): Promise<ResultData<T>> {
-		return this.service({
-			method: 'DELETE',
-			url: url,
-			params: params,
-		})
-	}
-}
-
-// 导出一个实例对象
-export default new RequestHttp(config)
+export default instance

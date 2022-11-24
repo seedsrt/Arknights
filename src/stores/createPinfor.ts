@@ -29,10 +29,10 @@ export default defineStore('PInfor', {
 			},
 			params: <any>{
 				offset: 1,
-				limit: 20,
+				limit: 10,
 				order: 'desc',
 			},
-			totleProduction: 0,
+			total: 0,
 			isAdd: false,
 			dialogImageUrl: '',
 			dialogVisible: false,
@@ -41,6 +41,19 @@ export default defineStore('PInfor', {
 		}
 	},
 	actions: {
+		// 更换每页条数
+		handleSizeChange(val: number) {
+			this.params.offset = 1
+			this.params.limit = val
+			this.getPinforList()
+			console.log(`${val} 更换每页条数`)
+		},
+		// 更换当前页数
+		handleCurrentChange(val: number) {
+			this.params.offset = val
+			this.getPinforList()
+			console.log(`${val} 更换当前页数`)
+		},
 		// 设置级联选择器
 		addDisabledForStatus(arr: any) {
 			let newArr = JSON.parse(JSON.stringify(arr))
@@ -83,11 +96,11 @@ export default defineStore('PInfor', {
 							type: 'success',
 							message: this.isAdd ? '添加成功' : '修改成功',
 						})
+						this.dialogFormVisible = false
 						this.resetForm()
 						setTimeout(async () => {
 							await this.getPinforList()
 						}, 100)
-						this.dialogFormVisible = false
 					}
 				} else {
 					ElMessage.warning('请填写必填项')
@@ -151,16 +164,14 @@ export default defineStore('PInfor', {
 		async getPinforList() {
 			const loading = createLoading()
 			this.productionTotList = []
-			this.totleProduction = 0
-			this.params.offset = 1
 			loading.loading = true
 			const res: any = await getProductionList(this.params)
 			console.log(res)
 			if (res?.code == 200) {
 				this.productionTotList = res.data.data ? res.data.data : []
 				this.isShowAdd = res.data.total > 20 ? true : false
-				this.totleProduction = res.data.total
-				await this.getPclassList()
+				this.total = res.data.total
+				// await this.getPclassList()
 				console.log(this.isShowAdd, 'this.isShowAdd')
 			}
 			loading.loading = false
@@ -226,8 +237,8 @@ export default defineStore('PInfor', {
 				type: 'warning',
 			})
 				.then(() => {
-					this.resetForm()
 					this.dialogFormVisible = false
+					this.resetForm()
 					done()
 				})
 				.catch(() => {})

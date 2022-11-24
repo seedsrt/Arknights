@@ -22,15 +22,6 @@ const filterTableInforData = computed(() =>
 			data.name.toLowerCase().includes(skillInfor.search.toLowerCase())
 	)
 )
-const handleSizeChange = (val: number) => {
-	console.log(`${val} items per page`)
-}
-const handleCurrentChange = (val: number) => {
-	console.log(`current page: ${val}`)
-}
-const currentPage = ref(4)
-const pageSize = ref(100)
-
 onMounted(() => {
 	skillInfor.getSkillInforList()
 	skillInfor.getProList()
@@ -100,25 +91,18 @@ onMounted(() => {
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-button
-				v-if="skillInfor.isShowAdd"
-				class="mt-4"
-				style="width: 100%"
-				@click.stop="skillInfor.addMore"
-				>查看更多</el-button
-			>
-			<!-- <div class="demo-pagination-block">
+			<div class="demo-pagination-block">
 				<el-pagination
-					v-model:current-page="currentPage"
-					v-model:page-size="pageSize"
+					v-model:current-page="skillInfor.params.offset"
+					v-model:page-size="skillInfor.params.limit"
 					:page-sizes="[10, 20, 30, 40]"
 					:background="true"
 					layout="->, total, sizes, prev, pager, next, jumper"
-					:total="400"
-					@size-change="handleSizeChange"
-					@current-change="handleCurrentChange"
+					:total="skillInfor.total"
+					@size-change="skillInfor.handleSizeChange"
+					@current-change="skillInfor.handleCurrentChange"
 				/>
-			</div> -->
+			</div>
 		</el-card>
 		<el-dialog
 			v-model="skillInfor.dialogFormVisible"
@@ -199,6 +183,8 @@ onMounted(() => {
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 }
+</style>
+<style>
 .demo-pagination-block {
 	margin: 10px 0;
 }

@@ -304,7 +304,9 @@ onMounted(() => {
 			</el-table>
 			<template #footer>
 				<span class="dialog-footer">
-					<el-button @click.stop="PClass.handleCloseDetail">取消</el-button>
+					<el-button @click.stop="PClass.handleCloseDetail(ruleFormRef)"
+						>取消</el-button
+					>
 					<el-button
 						type="primary"
 						@click.stop="PClass.handleCloseDetail(ruleFormRef)"

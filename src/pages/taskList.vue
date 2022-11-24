@@ -16,9 +16,9 @@ const rules = reactive<FormRules>({
 			trigger: 'change',
 		},
 	],
-	task_url: [{ required: true, message: '请输入任务地址', trigger: 'blur' }],
+	task_url: [{ required: true, message: '请选择任务地址', trigger: 'change' }],
 	finish_task_url: [
-		{ required: true, message: '请输入完成地址', trigger: 'blur' },
+		{ required: true, message: '请选择完成地址', trigger: 'change' },
 	],
 	finish_score: [
 		{ required: true, message: '请输入任务完成度', trigger: 'blur' },
@@ -26,11 +26,12 @@ const rules = reactive<FormRules>({
 	click_num: [
 		{ required: true, message: '请输入需要点击次数(最小为1)', trigger: 'blur' },
 	],
+	role: [{ required: true, message: '请选择用户角色', trigger: 'change' }],
 	start_time: [
 		{
 			required: true,
-			message: '请输入任务开始时间',
-			trigger: 'blur',
+			message: '请选择任务开始时间',
+			trigger: 'change',
 		},
 	],
 })
@@ -68,6 +69,17 @@ onMounted(() => {
 								TList.taskClassList.find((item: any) => {
 									return item.task_type == scope.row.task_type
 								})?.task_type_name
+							}}
+						</span>
+					</template>
+				</el-table-column>
+				<el-table-column prop="role" label="角色" width="120">
+					<template #default="scope">
+						<span>
+							{{
+								TList.roleList.find((item: any) => {
+									return item.role == scope.row.role
+								})?.role_name
 							}}
 						</span>
 					</template>
@@ -233,6 +245,16 @@ onMounted(() => {
 							value-format="x"
 						/>
 					</el-form-item>
+				</el-form-item>
+				<el-form-item prop="role" label="用户角色">
+					<el-select placeholder="请选择用户角色" v-model="TList.form.role">
+						<el-option
+							v-for="item in TList.roleList"
+							:key="item.role"
+							:label="item.role_name"
+							:value="item.role"
+						/>
+					</el-select>
 				</el-form-item>
 				<el-form-item prop="sort" label="排序">
 					<el-input

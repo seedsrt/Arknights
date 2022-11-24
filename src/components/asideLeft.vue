@@ -53,6 +53,21 @@
 					<el-menu-item index="/skillInformation">技能信息管理</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
+			<el-sub-menu index="角色管理">
+				<template #title>
+					<i class="mr-10px iconfont icon-guanliyuan_jiaoseguanli"></i>
+					<span>角色管理</span>
+				</template>
+				<el-menu-item-group>
+					<el-menu-item index="/role">角色管理</el-menu-item>
+				</el-menu-item-group>
+				<el-menu-item-group>
+					<el-menu-item index="/user">用户管理</el-menu-item>
+				</el-menu-item-group>
+				<el-menu-item-group>
+					<el-menu-item index="/report">报告管理</el-menu-item>
+				</el-menu-item-group>
+			</el-sub-menu>
 		</el-menu>
 	</div>
 </template>
@@ -79,6 +94,7 @@ const asider = createAside()
 		position: relative;
 	}
 	.top-img {
+		padding: 10px;
 		display: flex;
 		justify-content: center;
 		align-items: center;

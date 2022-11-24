@@ -103,9 +103,9 @@ export default defineStore('TAddress', {
 						ElMessage.success(
 							this.isChangeTaskAddress ? '修改成功' : '添加成功'
 						)
+						this.dialogFormVisible = false
 						this.resetForm()
 						await this.getTaskAddressList()
-						this.dialogFormVisible = false
 					}
 					loading.loading1 = false
 				} else {

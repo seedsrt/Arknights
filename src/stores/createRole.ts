@@ -1,52 +1,41 @@
 import { defineStore } from 'pinia'
-import {
-	getFinishScore,
-	addFinishScore,
-	updateFinishScore,
-	deleteFinishScore,
-} from '~/api/globalApi'
+import { getRoleList, addRole, updateRole, delRole } from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
-export default defineStore('TCompletion', {
+export default defineStore('Role', {
 	state() {
 		return {
 			// 当前修改表单内容
 			changeForm: <any>{},
 			// 判断是否为修改
-			isChangeTaskList: false,
+			isChangeRoleList: false,
 			// 添加、修改对话框显隐
 			dialogFormVisible: false,
 			// 添加、申请的表单内容
 			form: <any>{
-				task_finish_score_name: '', // 任务完成度名称
-				add_score: undefined, // 新增贡献点
-				need_finish_score: undefined, // 需要完成度
-				sort: undefined, // 排序 值越大越排在前面
+				role_name: '', // 角色名称
 			},
 			// 任务列表
-			TCompletionList: <any>[],
+			roleList: <any>[],
 			// 搜索内容
 			search: '',
 		}
 	},
 	actions: {
-		//获取任务完成度列表
-		async getTaskList() {
+		//获取角色列表
+		async getRoleList() {
 			const loading = createLoading()
 			loading.loading = true
-			this.TCompletionList = []
-			const res: any = await getFinishScore()
-			console.log(res, '获取任务完成度列表')
-			this.TCompletionList = res.data ? res.data : []
+			this.roleList = []
+			const res: any = await getRoleList()
+			console.log(res, '任务列表')
+			this.roleList = res.data ? res.data : []
 			loading.loading = false
 		},
 		// 重置表单内容
 		resetForm() {
 			this.changeForm = {}
 			this.form = {
-				task_finish_score_name: '',
-				add_score: undefined,
-				need_finish_score: undefined,
-				sort: undefined,
+				role_name: '',
 			}
 		},
 		// 关闭对话框
@@ -68,29 +57,23 @@ export default defineStore('TCompletion', {
 			if (!formEl) return
 			await formEl.validate(async (valid: any, fields: any) => {
 				if (valid) {
-					console.log(this.form, this.changeForm, this.isChangeTaskList)
+					console.log(this.form, this.changeForm, this.isChangeRoleList)
 					const loading = createLoading()
 					loading.loading1 = true
-					const res: any = this.isChangeTaskList
-						? await updateFinishScore({
-								task_finish_score_name: this.form.task_finish_score_name,
-								add_score: this.form.add_score,
-								need_finish_score: this.form.need_finish_score,
-								sort: this.form.sort,
-								tfid: this.changeForm.tfid,
+					const res: any = this.isChangeRoleList
+						? await updateRole({
+								role: this.changeForm.role,
+								role_name: this.form.role_name,
 						  }) // 修改
-						: await addFinishScore({
-								task_finish_score_name: this.form.task_finish_score_name,
-								add_score: this.form.add_score,
-								need_finish_score: this.form.need_finish_score,
-								sort: this.form.sort,
+						: await addRole({
+								role_name: this.form.role_name,
 						  }) // 添加
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
-						ElMessage.success(this.isChangeTaskList ? '修改成功' : '添加成功')
+						ElMessage.success(this.isChangeRoleList ? '修改成功' : '添加成功')
 						this.dialogFormVisible = false
 						this.resetForm()
-						await this.getTaskList()
+						await this.getRoleList()
 					}
 					loading.loading1 = false
 				} else {
@@ -99,20 +82,17 @@ export default defineStore('TCompletion', {
 			})
 		},
 		// 点击修改、添加事件
-		changeTaskList(
+		changeRoleList(
 			formEl: FormInstance | undefined,
 			isChange: boolean,
 			item?: any
 		) {
 			formEl?.clearValidate()
-			this.isChangeTaskList = isChange
+			this.isChangeRoleList = isChange
 			if (isChange) {
 				this.changeForm = item
 				this.form = {
-					task_finish_score_name: item.task_finish_score_name,
-					add_score: item.add_score,
-					sort: item.sort,
-					need_finish_score: item.need_finish_score,
+					role_name: item.role_name,
 				}
 				console.log(item, '点击添加')
 			}
@@ -120,9 +100,9 @@ export default defineStore('TCompletion', {
 		},
 		deleteRow(item: any) {
 			const loading = createLoading()
-			console.log(item)
+			console.log(typeof item.tid)
 			ElMessageBox.confirm(
-				'确定是否要删除（' + item.task_finish_score_name + '）？',
+				'确定是否要删除（' + item.role_name + '）？',
 				'警告',
 				{
 					confirmButtonText: '确定',
@@ -132,14 +112,14 @@ export default defineStore('TCompletion', {
 			)
 				.then(async () => {
 					loading.loading = true
-					const res: any = await deleteFinishScore({
-						tfid: item.tfid,
+					const res: any = await delRole({
+						role: item.role,
 					})
 					console.log(res)
 					loading.loading = false
 					if (res.code === 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
-						await this.getTaskList()
+						await this.getRoleList()
 					}
 				})
 				.catch(() => {})
