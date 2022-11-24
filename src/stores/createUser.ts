@@ -79,7 +79,12 @@ export default defineStore('User', {
 					const loading = createLoading()
 					loading.loading1 = true
 					const res: any = await updateUser({
-						...this.form,
+						name: this.form.name,
+						phone: this.form.phone ? this.form.phone : undefined,
+						email: this.form.email ? this.form.email : undefined,
+						password: this.form.password,
+						score: this.form.score,
+						role: this.form.role,
 						id: this.changeForm.id,
 					}) // 修改
 					console.log(res, '提交修改、更改表单')

@@ -190,8 +190,8 @@ onMounted(() => {
 		v-model="reportAdmin.dialogFormVisible"
 		:title="
 			reportAdmin.isChangeReportList
-				? '修改' + reportAdmin.changeForm.name
-				: '添加角色'
+				? '修改' + reportAdmin.changeForm.title
+				: '添加报告'
 		"
 		:before-close="reportAdmin.handleClose"
 	>

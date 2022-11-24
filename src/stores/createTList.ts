@@ -197,7 +197,7 @@ export default defineStore('TList', {
 					})
 					console.log(res)
 					loading.loading = false
-					if (res.code === 200) {
+					if (res?.code === 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
 						await this.getTaskList()
 					}

@@ -19,7 +19,7 @@ export default defineStore('ReportAdmin', {
 				limit: 10,
 				order: 'desc',
 			},
-			form: {
+			form: <any>{
 				report_content: '', // 报告内容
 				user_id: <any>[], // 用户ID
 				title: '',

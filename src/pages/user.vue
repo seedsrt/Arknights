@@ -56,7 +56,7 @@ onMounted(() => {
 					width="200"
 				>
 					<template #default="scope">
-						<span>
+						<span v-if="scope.row.last_login_time">
 							{{
 								dayjs(scope.row.last_login_time).format('YYYY-MM-DD HH:mm:ss')
 							}}
