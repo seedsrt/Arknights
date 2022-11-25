@@ -49,6 +49,7 @@ declare module 'vue-router/auto/routes' {
     '/taskCompletion': RouteRecordInfo<'/taskCompletion', '/taskCompletion', Record<never, never>, Record<never, never>>,
     '/taskList': RouteRecordInfo<'/taskList', '/taskList', Record<never, never>, Record<never, never>>,
     '/user': RouteRecordInfo<'/user', '/user', Record<never, never>, Record<never, never>>,
+    '/version': RouteRecordInfo<'/version', '/version', Record<never, never>, Record<never, never>>,
   }
 }
 

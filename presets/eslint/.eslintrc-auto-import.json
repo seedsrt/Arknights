@@ -35,6 +35,7 @@
     "createTclass": true,
     "createUnrefFn": true,
     "createUser": true,
+    "createVersion": true,
     "customRef": true,
     "debouncedRef": true,
     "debouncedWatch": true,

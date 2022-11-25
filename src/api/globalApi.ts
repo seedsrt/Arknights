@@ -237,21 +237,21 @@ export function updateUser(params?: object) {
 // -------------------------------------------------------------------
 
 // 报告列表
-export function getReportList(params?: object) {
+export function getReportList(params: object) {
 	return get('/admin/report/list', params)
 }
 
 // -------------------------------------------------------------------
 
-export function getSummarysList(params?: object) {
+export function getSummarysList(params: object) {
 	return get('/admin/summarys/list', params)
 }
 
-export function addSummarys(params?: object, data?: object) {
+export function addSummarys(params: object, data: object) {
 	return post('/admin/summarys/create', params, data)
 }
 
-export function updateSummarys(id: number, params?: object, data?: object) {
+export function updateSummarys(id: number, params: object, data: object) {
 	return post('/admin/summarys/update/' + id, params, data)
 }
 
@@ -259,6 +259,23 @@ export function delSummarys(id: number) {
 	return del('/admin/summarys/del/' + id)
 }
 
-export function sendSummarysList(id?: number) {
+export function sendSummarysList(id: number) {
 	return get('/admin/summarys/send', { id: id })
+}
+
+// -------------------------------------------------------------------
+
+// 版本更新
+export function getVersionList() {
+	return get('/admin/version/get')
+}
+
+// 添加版本
+export function addVersion(params: object, data: any) {
+	return post('/admin/version/add', params, data)
+}
+
+// 删除版本
+export function delVersionList(params: object) {
+	return get('/admin/version/del', params)
 }

@@ -36,6 +36,7 @@ declare global {
   const createTclass: typeof import('../../src/stores/createTclass')['default']
   const createUnrefFn: typeof import('@vueuse/core')['createUnrefFn']
   const createUser: typeof import('../../src/stores/createUser')['default']
+  const createVersion: typeof import('../../src/stores/createVersion')['default']
   const customRef: typeof import('vue')['customRef']
   const debouncedRef: typeof import('@vueuse/core')['debouncedRef']
   const debouncedWatch: typeof import('@vueuse/core')['debouncedWatch']

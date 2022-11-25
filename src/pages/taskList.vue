@@ -126,11 +126,11 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click="TList.changeTaskList(ruleFormRef, true, scope.row)"
+							@click.stop="TList.changeTaskList(ruleFormRef, true, scope.row)"
 						>
 							修改
 						</el-button>
-						<el-button type="danger" @click="TList.deleteRow(scope.row)">
+						<el-button type="danger" @click.stop="TList.deleteRow(scope.row)">
 							删除
 						</el-button>
 					</template>
@@ -186,7 +186,7 @@ onMounted(() => {
 						/>
 					</el-select>
 				</el-form-item>
-				<el-form-item prop="finish_task_url" label="完成地址">
+				<!-- <el-form-item prop="finish_task_url" label="完成地址">
 					<el-select
 						placeholder="请选择任务完成接口地址"
 						v-model="TList.form.finish_task_url"
@@ -198,7 +198,7 @@ onMounted(() => {
 							:value="item.finish_task_url"
 						/>
 					</el-select>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item prop="finish_score" label="完成度">
 					<el-input
 						style="width: 200px"

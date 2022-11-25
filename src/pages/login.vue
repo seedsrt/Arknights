@@ -37,7 +37,7 @@ onMounted(() => {
 <template>
 	<div class="login-template">
 		<el-card v-loading="loading.loading" class="login-box">
-			<h1 class="login-title">星火后台登录</h1>
+			<h1 class="login-title">火星后台登录</h1>
 			<el-form
 				ref="ruleFormRef"
 				:model="login.form"

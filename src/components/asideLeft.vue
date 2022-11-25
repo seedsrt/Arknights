@@ -11,7 +11,7 @@
 			@select="asider.menuClick"
 		>
 			<transition>
-				<div v-if="!asider.isCollapse" class="top-logo">星火后台管理</div>
+				<div v-if="!asider.isCollapse" class="top-logo">火星后台管理</div>
 				<div v-else class="top-img">
 					<img src="/public/logo.png" alt="" />
 				</div>
@@ -69,6 +69,15 @@
 				</el-menu-item-group>
 				<el-menu-item-group>
 					<el-menu-item index="/reportByAdmin">管理员报告管理</el-menu-item>
+				</el-menu-item-group>
+			</el-sub-menu>
+			<el-sub-menu index="版本">
+				<template #title>
+					<i class="mr-10px iconfont icon-yuzhijineng"></i>
+					<span>版本管理</span>
+				</template>
+				<el-menu-item-group>
+					<el-menu-item index="/version">版本历史</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
 		</el-menu>
