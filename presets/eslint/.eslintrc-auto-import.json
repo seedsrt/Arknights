@@ -15,6 +15,7 @@
     "controlledRef": true,
     "createApp": true,
     "createAside": true,
+    "createConfigs": true,
     "createEventHook": true,
     "createGlobalState": true,
     "createInjectionState": true,

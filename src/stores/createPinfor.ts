@@ -69,7 +69,7 @@ export default defineStore('PInfor', {
 				}
 				loading.loading2 = false
 				console.log(this.search)
-			}, 300)
+			}, 600)
 		},
 		// 更换每页条数
 		handleSizeChange(val: number) {

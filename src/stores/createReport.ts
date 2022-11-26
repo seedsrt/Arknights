@@ -41,7 +41,7 @@ export default defineStore('Report', {
 					this.total = res.data.total
 				}
 				loading.loading2 = false
-			}, 300)
+			}, 600)
 		},
 		//获取用户报告列表
 		async getUserList() {

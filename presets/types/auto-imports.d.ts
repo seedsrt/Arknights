@@ -16,6 +16,7 @@ declare global {
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
   const createApp: typeof import('vue')['createApp']
   const createAside: typeof import('../../src/stores/createAside')['default']
+  const createConfigs: typeof import('../../src/stores/createConfigs')['default']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']

@@ -6,6 +6,7 @@ import {
 	delSummarys,
 	getUser,
 	sendSummarysList,
+	getRoleList,
 } from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
 export default defineStore('ReportAdmin', {
@@ -46,6 +47,18 @@ export default defineStore('ReportAdmin', {
 		}
 	},
 	actions: {
+		groupBy(array: any, f: any) {
+			const groups = <any>{}
+			array.forEach(function (o: any) {
+				//注意这里必须是forEach 大写
+				const group = JSON.stringify(f(o))
+				groups[group] = groups[group] || []
+				groups[group].push(o)
+			})
+			return Object.keys(groups).map(function (group) {
+				return groups[group]
+			})
+		},
 		//获取用户报告列表
 		async getSummarysList() {
 			const loading = createLoading()
@@ -63,8 +76,23 @@ export default defineStore('ReportAdmin', {
 			loading.loading = true
 			this.userList = []
 			const res: any = await getUser()
-			console.log(res, '获取用户列表')
-			this.userList = res.data ? res.data : []
+			const resRole: any = await getRoleList()
+			console.log(res, resRole, '获取用户列表')
+			if (res?.code === 200 || resRole?.code === 200) {
+				resRole?.data.forEach((item: any) => {
+					console.log(item)
+					this.userList.push({
+						roleName: item.role_name,
+						role: item.role,
+						options: res?.data.filter((items: any) => {
+							if (item.role == items.role) {
+								return items
+							}
+						}),
+					})
+				})
+			}
+			console.log(this.userList, 'this.userList')
 			loading.loading = false
 		},
 		// 点击进去详情
@@ -173,7 +201,7 @@ export default defineStore('ReportAdmin', {
 				}
 				loading.loading2 = false
 				console.log(this.search)
-			}, 300)
+			}, 600)
 		},
 		// 点击修改、添加事件
 		changeReportList(

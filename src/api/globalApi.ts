@@ -279,3 +279,25 @@ export function addVersion(params: object, data: any) {
 export function delVersionList(params: object) {
 	return get('/admin/version/del', params)
 }
+
+// -------------------------------------------------------------------
+
+// 创建配置信息
+export function addConfigs(params: object) {
+	return post('/admin/configs/create', params)
+}
+
+// 配置信息列表
+export function getConfigsList(params: object) {
+	return get('/admin/configs/list', params)
+}
+
+// 修改配置信息
+export function updateConfigs(id: Number | String, params: object) {
+	return post('/admin/configs/update/' + id, params)
+}
+
+// 创建配置信息
+export function delConfigs(id: Number | String) {
+	return del('/admin/configs/del/' + id)
+}

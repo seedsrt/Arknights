@@ -19,21 +19,35 @@ const rules = reactive<FormRules>({
 	],
 	title: [{ required: true, message: '请输入用户组名', trigger: 'blur' }],
 })
-
+const filterMethod = (query: any, item: any) => {
+	return item.label.toLowerCase().includes(query.toLowerCase())
+}
 const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
 	ElMessage.warning(`至多只能上传一个文件`)
 }
 
-// const changeFile = (file: any, fileList: any) => {
-// 	console.log('file', file, fileList)
-// 	if (file.raw.type !== 'audio/mpeg') {
-// 		ElMessage.error('只能上传mp3') //限制文件类型
-// 		reportAdmin.fileList = []
-// 		return false
-// 	} else {
-// 		return true
-// 	}
-// }
+const generateData = () => {
+	const data = <any>[]
+	const states = [
+		'California',
+		'Illinois',
+		'Maryland',
+		'Texas',
+		'Florida',
+		'Colorado',
+		'Connecticut ',
+	]
+	states.forEach((city, index) => {
+		data.push({
+			label: city,
+			key: index,
+		})
+	})
+	return data
+}
+
+const data = ref<any[]>(generateData())
+
 const handleRemove = (file: UploadFile) => {
 	reportAdmin.fileList = []
 	console.log(file)
@@ -141,50 +155,6 @@ onMounted(() => {
 			</div>
 		</el-card>
 	</div>
-	<!-- <el-dialog
-		v-model="reportAdmin.dialogFormVisibleDetail"
-		:title="reportAdmin.details.name + '用户报告'"
-		:close-on-click-modal="false"
-		:close-on-press-escape="false"
-	>
-		<el-descriptions :column="2" border direction="vertical">
-			<el-descriptions-item label="用户名">{{
-				reportAdmin.details.name
-			}}</el-descriptions-item>
-			<el-descriptions-item label="用户电话">{{
-				reportAdmin.details.phone
-			}}</el-descriptions-item>
-			<el-descriptions-item label="上传时间">{{
-				dayjs(reportAdmin.details.created_at).format('YYYY-MM-DD HH:mm:ss')
-			}}</el-descriptions-item>
-			<el-descriptions-item label="更新时间">{{
-				dayjs(reportAdmin.details.updated_at).format('YYYY-MM-DD HH:mm:ss')
-			}}</el-descriptions-item>
-			<el-descriptions-item :span="2" label="报告内容">
-				{{ reportAdmin.details.report_content }}
-			</el-descriptions-item>
-		</el-descriptions>
-		<div class="downLoadFile" v-if="reportAdmin.details.img_url">
-			<span class="p-6px"> 报告下载： </span>
-			<a
-				class="downLoadFile-a"
-				:href="reportAdmin.details.img_url"
-				:download="reportAdmin.details.name + '报告内容'"
-				target="_blank"
-			>
-				<i class="iconfont icon-shiyongwendang"></i>
-				{{ reportAdmin.details.name }}报告附件
-			</a>
-		</div>
-
-		<template #footer>
-			<span class="dialog-footer">
-				<el-button @click.stop="reportAdmin.dialogFormVisibleDetail = false"
-					>取消</el-button
-				>
-			</span>
-		</template>
-	</el-dialog> -->
 
 	<el-dialog
 		v-model="reportAdmin.dialogFormVisible"
@@ -213,6 +183,14 @@ onMounted(() => {
 				/>
 			</el-form-item>
 			<el-form-item prop="user_id" label="用户">
+				<!-- <el-transfer
+					filterable
+					:titles="['用户列表', '所选用户']"
+					v-model="reportAdmin.form.user_id"
+					:filter-method="filterMethod"
+					filter-placeholder="搜索用户"
+					:data="reportAdmin.userList"
+				/> -->
 				<el-select
 					clearable
 					collapse-tags
@@ -221,12 +199,24 @@ onMounted(() => {
 					v-model="reportAdmin.form.user_id"
 					placeholder="选择用户"
 				>
-					<el-option
+					<el-option-group
+						v-for="group in reportAdmin.userList"
+						:key="group.role"
+						:label="group.roleName"
+					>
+						<el-option
+							v-for="item in group.options"
+							:key="item.id"
+							:label="item.name"
+							:value="item.id"
+						/>
+					</el-option-group>
+					<!-- <el-option
 						v-for="item in reportAdmin.userList"
 						:key="item"
 						:label="item.name"
 						:value="item.id"
-					/>
+					/> -->
 				</el-select>
 			</el-form-item>
 			<el-form-item prop="report_content" label="报告内容">

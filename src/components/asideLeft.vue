@@ -9,6 +9,7 @@
 			class="el-menu-vertical-demo"
 			:collapse="asider.isCollapse"
 			@select="asider.menuClick"
+			:unique-opened="true"
 		>
 			<transition>
 				<div v-if="!asider.isCollapse" class="top-logo">火星后台管理</div>
@@ -71,13 +72,16 @@
 					<el-menu-item index="/reportByAdmin">管理员报告管理</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
-			<el-sub-menu index="版本">
+			<el-sub-menu index="系统管理">
 				<template #title>
 					<i class="mr-10px iconfont icon-yuzhijineng"></i>
-					<span>版本管理</span>
+					<span>系统管理</span>
 				</template>
 				<el-menu-item-group>
 					<el-menu-item index="/version">版本历史</el-menu-item>
+				</el-menu-item-group>
+				<el-menu-item-group>
+					<el-menu-item index="/configs">系统配置</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
 		</el-menu>
