@@ -17,7 +17,6 @@ export default defineStore('PClass', {
 			searchDetail: <string>'',
 			dialogFormVisible: <boolean>false,
 			dialogFormVisibleDetail: <boolean>false,
-			selectPid: 0,
 			form: reactive({
 				id: 0,
 				name: '',
@@ -25,14 +24,15 @@ export default defineStore('PClass', {
 			settingForm: reactive({
 				name: '',
 			}),
-			isAdd: <boolean>false, // ture 是添加
-			isClass: <boolean>false, // ture 是添加分类
+			isAdd: <boolean>false, // ture 是否添加
+			isClass: <boolean>false, // ture 是否添加分类
 			settingBrandName: '',
 			dialogImageUrl: ref(''),
 			dialogVisible: ref(false),
 			disabled: ref(false),
 			fileList: <any>[],
 			settingItem: <any>{},
+			settingItemSecond: <any>{},
 		}
 	},
 	actions: {
@@ -50,9 +50,9 @@ export default defineStore('PClass', {
 					}
 				})
 				this.productionBrandList = res ? res : []
-				// console.log(this.productionBrandList, '子品牌类型')
 			}
 		},
+
 		// 获取产品类型列表页
 		async getPclassList() {
 			const loading = createLoading()
@@ -83,6 +83,7 @@ export default defineStore('PClass', {
 			// console.log(this.productionTotList, '产品总')
 			loading.loading = false
 		},
+
 		// 删除产品类型
 		deleteRow(item: any) {
 			const loading = createLoading()
@@ -95,50 +96,50 @@ export default defineStore('PClass', {
 				.then(async () => {
 					loading.loading = true
 					const res: any = await deleteProductTypes(item.id)
-					// console.log(res)
-					this.refshBrand(item.pid)
 					loading.loading = false
 					if (res?.code == 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
+						await this.refshBrand(this.settingItemSecond.id)
 					}
 				})
 				.catch(() => {
 					ElMessage({ type: 'info', message: '已取消' })
 				})
 		},
-		// 修改产品类型
+
+		// 点击修改按钮
 		async settingRow(
 			formEl: FormInstance | undefined,
 			item: any,
-			index: number
+			isClass: boolean
 		) {
 			formEl?.clearValidate()
-			const loading = createLoading()
-			index == 0 ? (this.isClass = true) : (this.isClass = false)
+			this.isClass = isClass
 			this.settingItem = item
+			this.settingItemSecond = item
 			this.isAdd = false
 			this.dialogFormVisible = true
 			this.settingForm.name = item.title
-			// console.log(item)
-			// console.log(this.form.id, 'id')
-			loading.loading1 = true
-			const res: any = await getProductTypesDetail(item.id)
-			if (res?.code == 200) {
-				// console.log(res)
-				let resData = res.data ? res.data : {}
-				this.form.name = resData.title
-				if (resData.img_url) this.fileList = [{ url: resData.img_url }]
-			}
-			loading.loading1 = false
+			console.log(this.settingItem, 'settingItem')
+			this.form.name = item.title
+			if (item.img_url) this.fileList = [{ url: item.img_url }]
 		},
+
+		// 点击添加按钮
+		addProductionClass(formEl: FormInstance | undefined, isFirst: boolean) {
+			formEl?.clearValidate()
+			this.isClass = isFirst
+			this.isAdd = true
+			this.dialogFormVisible = true
+		},
+
 		// 点击产品类型去品牌类型
 		settingBrand(item: any) {
 			// console.log(item)
 			this.form.id = item.id
 			this.settingItem = item
-			console.log(this.settingItem)
-			this.selectPid = item.id
-			// console.log(item.pid, 'item.pid')
+			this.settingItemSecond = item
+			console.log(this.settingItem, 'settingItem')
 			this.settingBrandName = item.title
 			let res: any = []
 			this.productionTotList.forEach((i: any) => {
@@ -147,26 +148,19 @@ export default defineStore('PClass', {
 				}
 			})
 			this.productionBrandList = res ? res : []
-			// console.log(this.productionBrandList, '子品牌类型')
+			console.log(this.productionBrandList, '子品牌类型')
 			this.dialogFormVisibleDetail = true
-			// console.log(this.form, 'this.form')
 		},
-		// 点击添加
-		onAddItem(formEl: FormInstance | undefined, item: any) {
-			formEl?.clearValidate()
-			item == 0 ? (this.isClass = true) : (this.isClass = false)
-			this.isAdd = true
-			this.dialogFormVisible = true
-			// console.log(item, '添加')
-		},
+
 		resetForm() {
 			this.form.name = ''
 			this.form.id = 0
-			this.settingForm.name = ''
 			this.fileList = []
 			this.settingItem = {}
+			this.isClass ? (this.settingItemSecond = {}) : ''
 		},
-		// 确认关闭产品
+
+		// 确认关闭产品二级分类
 		handleClose(done: () => void) {
 			ElMessageBox.confirm('确定要取消吗？', '警告', {
 				type: 'warning',
@@ -180,72 +174,50 @@ export default defineStore('PClass', {
 					// catch error
 				})
 		},
-		// 确认关闭品牌类型
+
+		// 确认关闭产品一级分类
 		handleCloseDetail() {
 			this.dialogFormVisibleDetail = false
 			this.searchDetail = ''
 			this.productionBrandList = []
 		},
-		// 提交添加
-		async createProduct(formEl: FormInstance | undefined) {
+
+		// 提交添加和修改产品二级分类
+		async sumProductClass(formEl: FormInstance | undefined) {
 			if (!formEl) return
-			await formEl.validate(async (valid: any, fields: any) => {
+			await formEl.validate(async (valid: any) => {
 				if (valid) {
 					const loading = createLoading()
 					loading.loading2 = true
-					console.log(this.settingItem, 'this.settingItem')
-					console.log(this.form, 'this.settingItem')
 					const params = {
 						title: this.form.name,
-						pid: this.form.id,
+						pid: this.isAdd
+							? this.isClass
+								? 0
+								: this.settingItemSecond.id == this.settingItem?.id
+								? this.settingItemSecond.id
+								: this.settingItemSecond.pid
+							: this.isClass
+							? 0
+							: this.settingItemSecond.pid,
 					}
 					let data: any = new FormData()
 					this.fileList[0]?.raw
 						? data.append('img_url', this.fileList[0]?.raw)
 						: (data = undefined)
-					// // console.log(data)
-					const res: any = await createProductTypes(params, data)
+					// this.isAdd
+					// 	? console.log(params, 'params')
+					// 	: console.log(params, this.settingItem.id, 'params')
+					const res: any = this.isAdd
+						? await createProductTypes(params, data)
+						: await updateProductTypes(this.settingItem.id, params, data)
 					console.log(res)
 					if (res?.code == 200) {
+						ElMessage.success('修改成功')
+						await this.refshBrand(this.settingItemSecond.id)
 						this.dialogFormVisible = false
-						this.refshBrand(this.form.id)
-						this.fileList = []
-						this.form.name = ''
+						this.resetForm()
 					}
-					loading.loading2 = false
-				} else {
-					ElMessage.warning('请填写必填项')
-				}
-			})
-		},
-		// 提交修改
-		async updateProduct(formEl: FormInstance | undefined) {
-			if (!formEl) return
-			await formEl.validate(async (valid: any, fields: any) => {
-				if (valid) {
-					const loading = createLoading()
-					loading.loading2 = true
-					const params = {
-						title: this.form.name,
-						pid: this.settingItem.pid,
-					}
-					let data: any = new FormData()
-					this.fileList[0]?.raw
-						? data.append('img_url', this.fileList[0]?.raw)
-						: (data = undefined)
-					// console.log(data)
-					const res: any = await updateProductTypes(
-						this.settingItem.id,
-						params,
-						data
-					)
-					if (res?.code == 200) {
-						this.dialogFormVisible = false
-						this.refshBrand(this.settingItem.pid)
-						this.fileList = []
-						this.form.name = ''
-					}
-					// console.log(res)
 					loading.loading2 = false
 				} else {
 					ElMessage.warning('请填写必填项')

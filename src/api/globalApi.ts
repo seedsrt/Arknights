@@ -14,7 +14,7 @@ export function logout() {
 // -------------------------------------------------------------------
 
 // 创建产品类型
-export function createProductTypes(params: object, data: object) {
+export function createProductTypes(params: object, data?: object) {
 	return post('/admin/product/types/create', params, data)
 }
 
@@ -32,7 +32,7 @@ export function getProductTypesDetail(productTypesId: number | string) {
 export function updateProductTypes(
 	productTypesId: number | string,
 	params: object,
-	data: object
+	data?: object
 ) {
 	return post('/admin/product/types/update/' + productTypesId, params, data)
 }

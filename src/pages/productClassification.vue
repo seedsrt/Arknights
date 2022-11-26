@@ -88,7 +88,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="PClass.onAddItem(ruleFormRef, 0)"
+								@click.stop="PClass.addProductionClass(ruleFormRef, true)"
 								>添加</el-button
 							>
 						</div>
@@ -96,7 +96,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click.stop="PClass.settingRow(ruleFormRef, scope.row, 0)"
+							@click.stop="PClass.settingRow(ruleFormRef, scope.row, true)"
 						>
 							修改
 						</el-button>
@@ -107,14 +107,13 @@ onMounted(() => {
 				</el-table-column>
 			</el-table>
 		</el-card>
+		<!-- 添加或修改 -->
 		<el-dialog
 			v-model="PClass.dialogFormVisible"
 			:title="
 				PClass.isAdd
-					? PClass.isClass
-						? '添加类型'
-						: '添加品牌'
-					: (PClass.isClass ? '修改类型' : '修改品牌') + PClass.settingForm.name
+					? '添加' + (PClass.isClass ? '产品类型' : '品牌')
+					: '修改' + PClass.settingItem.title
 			"
 			:before-close="PClass.handleClose"
 		>
@@ -139,20 +138,6 @@ onMounted(() => {
 					/>
 				</el-form-item>
 				<div v-if="!PClass.isClass">
-					<!-- <el-form-item label="品牌所属类型" label-width="120px">
-						<el-select
-							v-model="PClass.selectPid"
-							clearable
-							placeholder="Select"
-						>
-							<el-option
-								v-for="item in PClass.productionClassList"
-								:key="item.value"
-								:label="item.title"
-								:value="item.id"
-							/>
-						</el-select>
-					</el-form-item> -->
 					<el-form-item label="上传图片" label-width="120px">
 						<el-upload
 							action="#"
@@ -204,17 +189,14 @@ onMounted(() => {
 					<el-button
 						type="primary"
 						:loading="loading.loading2"
-						@click.stop="
-							PClass.isAdd
-								? PClass.createProduct(ruleFormRef)
-								: PClass.updateProduct(ruleFormRef)
-						"
+						@click.stop="PClass.sumProductClass(ruleFormRef)"
 					>
 						提交
 					</el-button>
 				</span>
 			</template>
 		</el-dialog>
+		<!-- 点击详情 -->
 		<el-dialog
 			v-model="PClass.dialogFormVisibleDetail"
 			:title="'编辑' + PClass.settingBrandName"
@@ -284,7 +266,7 @@ onMounted(() => {
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="PClass.onAddItem(ruleFormRef, -1)"
+								@click.stop="PClass.addProductionClass(ruleFormRef, false)"
 								>添加</el-button
 							>
 						</div>
@@ -292,7 +274,7 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="primary"
-							@click.stop="PClass.settingRow(ruleFormRef, scope.row, -1)"
+							@click.stop="PClass.settingRow(ruleFormRef, scope.row, false)"
 						>
 							修改
 						</el-button>
