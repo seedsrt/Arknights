@@ -69,7 +69,10 @@
 					<el-menu-item index="/report">报告管理</el-menu-item>
 				</el-menu-item-group>
 				<el-menu-item-group>
-					<el-menu-item index="/reportByAdmin">管理员报告管理</el-menu-item>
+					<el-menu-item index="/reportByAdmin">管理员报告</el-menu-item>
+				</el-menu-item-group>
+				<el-menu-item-group>
+					<el-menu-item index="/systemMessages">系统消息</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
 			<el-sub-menu index="系统管理">
@@ -82,6 +85,9 @@
 				</el-menu-item-group>
 				<el-menu-item-group>
 					<el-menu-item index="/configs">系统配置</el-menu-item>
+				</el-menu-item-group>
+				<el-menu-item-group>
+					<el-menu-item index="/payment">分红管理</el-menu-item>
 				</el-menu-item-group>
 			</el-sub-menu>
 		</el-menu>
@@ -134,5 +140,10 @@ const asider = createAside()
 	.el-menu {
 		border-right: solid 0px transparent !important;
 	}
+}
+</style>
+<style scoped>
+.el-menu ::v-deep(.el-sub-menu.is-active > .el-sub-menu__title) {
+	color: #409eff !important;
 }
 </style>

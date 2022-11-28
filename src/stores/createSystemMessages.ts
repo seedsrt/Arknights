@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia'
 import {
-	getSummarysList,
-	addSummarys,
-	updateSummarys,
-	delSummarys,
+	getSystemMessagesList,
+	addSystemMessages,
+	updateSystemMessages,
+	delSystemMessages,
 	getUser,
-	sendSummarysList,
+	getSendSystemMessagesName,
+	sendSystemMessages,
 	getRoleList,
-	getSendSummarysName,
 } from '~/api/globalApi'
 import type { FormInstance } from 'element-plus'
-export default defineStore('ReportAdmin', {
+export default defineStore('SystemMessages', {
 	state() {
 		return {
 			// 当前修改表单内容
@@ -31,12 +31,12 @@ export default defineStore('ReportAdmin', {
 			dialogFormVisible: false,
 			// dialogFormVisibleDetail: false,
 			// 报告列表
-			reportList: <any>[],
+			systemMessagesList: <any>[],
 			// 搜索内容
 			search: '',
 			// 点击表格详情数据
 			details: <any>{},
-			isChangeReportList: false,
+			isChangeSystemMessagesList: false,
 			// 用户列表
 			userList: <any>[],
 			// 上传语音列表
@@ -48,24 +48,24 @@ export default defineStore('ReportAdmin', {
 			sendDialogVisible: false,
 			send_user_name: '',
 			settingSend: <any>{},
-			reportAdminNameList: <any>[],
-			reportAdminList: <any>[],
+			sendUserNameList: <any>[],
+			systemMessagesNameList: <any>[],
 		}
 	},
 	actions: {
 		async submitSend() {
 			const loading = createLoading()
 			loading.loading3 = true
-			const res: any = await sendSummarysList({
-				id: this.settingSend.id,
+			const res: any = await sendSystemMessages({
+				id: this.settingSend.smid,
 				send_user_name: this.send_user_name,
 			})
 			if (res?.code == 200) {
 				ElMessage.success('发送成功')
 				this.sendDialogVisible = false
 				this.send_user_name = ''
-				if (this.reportAdminNameList.length == 1) {
-					this.send_user_name = this.reportAdminNameList[0].value
+				if (this.systemMessagesNameList.length == 1) {
+					this.send_user_name = this.systemMessagesNameList[0].value
 				}
 			}
 			loading.loading3 = false
@@ -73,23 +73,22 @@ export default defineStore('ReportAdmin', {
 		closeSend() {
 			this.sendDialogVisible = false
 			this.send_user_name = ''
-			if (this.reportAdminNameList.length == 1) {
-				this.send_user_name = this.reportAdminNameList[0].value
+			if (this.systemMessagesNameList.length == 1) {
+				this.send_user_name = this.systemMessagesNameList[0].value
 			}
 		},
-		async getSendReportAdminName() {
+		async getSendSystemMessagesName() {
 			const loading = createLoading()
 			loading.loading = true
-			this.reportAdminList = []
-			const { data } = await getSendSummarysName()
-			console.log(data, 'getSendReportAdminName')
-			this.reportAdminNameList = data ? data : []
-			if (this.reportAdminNameList.length == 1) {
-				this.send_user_name = this.reportAdminNameList[0].value
+			this.systemMessagesNameList = []
+			const { data } = await getSendSystemMessagesName()
+			console.log(data, 'getSendSystemMessagesName')
+			this.systemMessagesNameList = data ? data : []
+			if (this.systemMessagesNameList.length == 1) {
+				this.send_user_name = this.systemMessagesNameList[0].value
 			}
 			loading.loading = false
 		},
-
 		groupBy(array: any, f: any) {
 			const groups = <any>{}
 			array.forEach(function (o: any) {
@@ -103,13 +102,13 @@ export default defineStore('ReportAdmin', {
 			})
 		},
 		//获取用户报告列表
-		async getSummarysList() {
+		async getSystemMessagesList() {
 			const loading = createLoading()
 			loading.loading = true
-			this.reportList = []
-			const { data } = await getSummarysList(this.params)
+			this.systemMessagesList = []
+			const { data } = await getSystemMessagesList(this.params)
 			console.log(data, '获取用户列表')
-			this.reportList = data ? data?.data : []
+			this.systemMessagesList = data ? data?.data : []
 			this.total = data ? data.total : 0
 			loading.loading = false
 		},
@@ -138,21 +137,15 @@ export default defineStore('ReportAdmin', {
 			console.log(this.userList, 'this.userList')
 			loading.loading = false
 		},
-		// 点击进去详情
-		// gotoDetails(item: any) {
-		// 	console.log(item)
-		// 	this.dialogFormVisibleDetail = true
-		// 	this.details = item
-		// },
 		handleSizeChange(val: number) {
 			this.params.offset = 1
 			this.params.limit = val
-			this.getSummarysList()
+			this.getSystemMessagesList()
 			console.log(`${val} 更换每页条数`)
 		},
 		handleCurrentChange(val: number) {
 			this.params.offset = val
-			this.getSummarysList()
+			this.getSystemMessagesList()
 			console.log(`${val} 更换当前页数`)
 		},
 
@@ -177,9 +170,9 @@ export default defineStore('ReportAdmin', {
 					this.fileList[0]?.raw
 						? data.append('img_url', this.fileList[0]?.raw)
 						: (data = undefined)
-					const res: any = this.isChangeReportList
-						? await updateSummarys(
-								this.changeForm.id,
+					const res: any = this.isChangeSystemMessagesList
+						? await updateSystemMessages(
+								this.changeForm.smid,
 								{
 									user_id: this.form.user_id.toString(),
 									report_content: this.form.report_content,
@@ -187,7 +180,7 @@ export default defineStore('ReportAdmin', {
 								},
 								data
 						  ) // 修改
-						: await addSummarys(
+						: await addSystemMessages(
 								{
 									user_id: this.form.user_id.toString(),
 									report_content: this.form.report_content,
@@ -197,10 +190,12 @@ export default defineStore('ReportAdmin', {
 						  ) // 添加
 					console.log(res, '提交修改、更改表单')
 					if (res?.code == 200) {
-						ElMessage.success(this.isChangeReportList ? '修改成功' : '添加成功')
+						ElMessage.success(
+							this.isChangeSystemMessagesList ? '修改成功' : '添加成功'
+						)
 						this.dialogFormVisible = false
 						this.resetForm()
-						await this.getSummarysList()
+						await this.getSystemMessagesList()
 					}
 					loading.loading1 = false
 				} else {
@@ -231,15 +226,15 @@ export default defineStore('ReportAdmin', {
 			}
 			this.timer = setTimeout(async () => {
 				const loading = createLoading()
-				this.reportList = []
+				this.systemMessagesList = []
 				loading.loading2 = true
-				const res: any = await getSummarysList({
+				const res: any = await getSystemMessagesList({
 					...this.params,
 					title: this.search,
 				})
 				console.log(res)
 				if (res?.code == 200) {
-					this.reportList = res.data.data ? res.data.data : []
+					this.systemMessagesList = res.data.data ? res.data.data : []
 					this.total = res.data.total
 				}
 				loading.loading2 = false
@@ -254,7 +249,7 @@ export default defineStore('ReportAdmin', {
 		) {
 			formEl?.clearValidate()
 			console.log(item)
-			this.isChangeReportList = isChange
+			this.isChangeSystemMessagesList = isChange
 			if (isChange) {
 				this.changeForm = item
 				this.form = {
@@ -270,8 +265,10 @@ export default defineStore('ReportAdmin', {
 			this.dialogFormVisible = true
 		},
 
+		// 发送报告
 		sendReport(item: any) {
 			console.log(item)
+
 			this.settingSend = item
 			this.sendDialogVisible = true
 		},
@@ -291,12 +288,12 @@ export default defineStore('ReportAdmin', {
 			)
 				.then(async () => {
 					loading.loading = true
-					const res: any = await delSummarys(item.id)
+					const res: any = await delSystemMessages(item.smid)
 					console.log(res)
 					loading.loading = false
 					if (res.code === 200) {
 						ElMessage({ type: 'success', message: '删除成功' })
-						await this.getSummarysList()
+						await this.getSystemMessagesList()
 					}
 				})
 				.catch(() => {})

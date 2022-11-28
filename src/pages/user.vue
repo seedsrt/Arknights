@@ -156,7 +156,11 @@ onMounted(() => {
 					/>
 				</el-form-item>
 				<el-form-item prop="role" label="用户角色">
-					<el-select placeholder="请选择用户角色" v-model="User.form.role">
+					<el-select
+						placeholder="请选择用户角色"
+						filterable
+						v-model="User.form.role"
+					>
 						<el-option
 							v-for="item in User.roleList"
 							:key="item.role"

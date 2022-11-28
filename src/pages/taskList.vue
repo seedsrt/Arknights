@@ -165,6 +165,7 @@ onMounted(() => {
 				</el-form-item>
 				<el-form-item prop="task_type" label="任务类型">
 					<el-select
+						filterable
 						placeholder="请选择任务类型"
 						v-model="TList.form.task_type"
 					>
@@ -177,7 +178,11 @@ onMounted(() => {
 					</el-select>
 				</el-form-item>
 				<el-form-item prop="task_url" label="任务地址">
-					<el-select placeholder="请选择任务地址" v-model="TList.form.task_url">
+					<el-select
+						placeholder="请选择任务地址"
+						filterable
+						v-model="TList.form.task_url"
+					>
 						<el-option
 							v-for="item in TList.taskAddressList"
 							:key="item.taid"
@@ -247,7 +252,11 @@ onMounted(() => {
 					</el-form-item>
 				</el-form-item>
 				<el-form-item prop="role" label="用户角色">
-					<el-select placeholder="请选择用户角色" v-model="TList.form.role">
+					<el-select
+						placeholder="请选择用户角色"
+						filterable
+						v-model="TList.form.role"
+					>
 						<el-option
 							v-for="item in TList.roleList"
 							:key="item.role"

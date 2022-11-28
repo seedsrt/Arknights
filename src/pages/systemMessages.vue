@@ -6,7 +6,7 @@ import type {
 	UploadFile,
 	UploadProps,
 } from 'element-plus'
-const reportAdmin = createReportAdmin()
+const SystemMessages = createSystemMessages()
 const loading = createLoading()
 const ruleFormRef = ref<FormInstance>()
 const disabledDate = (time: Date) => {
@@ -49,17 +49,17 @@ const generateData = () => {
 const data = ref<any[]>(generateData())
 
 const handleRemove = (file: UploadFile) => {
-	reportAdmin.fileList = []
+	SystemMessages.fileList = []
 	console.log(file)
 }
 const handlePictureCardPreview = (file: UploadFile) => {
-	reportAdmin.dialogImageUrl = file.url!
-	reportAdmin.dialogVisible = true
+	SystemMessages.dialogImageUrl = file.url!
+	SystemMessages.dialogVisible = true
 }
 onMounted(() => {
-	reportAdmin.getSummarysList()
-	reportAdmin.getUserList()
-	reportAdmin.getSendReportAdminName()
+	SystemMessages.getSystemMessagesList()
+	SystemMessages.getUserList()
+	SystemMessages.getSendSystemMessagesName()
 })
 </script>
 
@@ -70,7 +70,7 @@ onMounted(() => {
 				ref="multipleTableRef"
 				table-layout="auto"
 				size="large"
-				:data="reportAdmin.reportList"
+				:data="SystemMessages.systemMessagesList"
 				stripe
 				style="width: auto"
 				max-height="680px"
@@ -104,16 +104,18 @@ onMounted(() => {
 						<div style="display: flex; justify-content: space-between">
 							<el-input
 								v-loading="loading.loading2"
-								@input="reportAdmin.searchDetail"
+								@input="SystemMessages.searchDetail"
 								style="width: 75%"
-								v-model="reportAdmin.search"
+								v-model="SystemMessages.search"
 								clearable
 								placeholder="搜索关键字"
 							/>
 							<el-button
 								style="width: 20%"
 								type="warning"
-								@click.stop="reportAdmin.changeReportList(ruleFormRef, false)"
+								@click.stop="
+									SystemMessages.changeReportList(ruleFormRef, false)
+								"
 								>添加</el-button
 							>
 						</div>
@@ -121,21 +123,21 @@ onMounted(() => {
 					<template #default="scope">
 						<el-button
 							type="warning"
-							@click.stop="reportAdmin.sendReport(scope.row)"
+							@click.stop="SystemMessages.sendReport(scope.row)"
 						>
 							发送
 						</el-button>
 						<el-button
 							type="primary"
 							@click.stop="
-								reportAdmin.changeReportList(ruleFormRef, true, scope.row)
+								SystemMessages.changeReportList(ruleFormRef, true, scope.row)
 							"
 						>
 							修改
 						</el-button>
 						<el-button
 							type="danger"
-							@click.stop="reportAdmin.deleteRow(scope.row)"
+							@click.stop="SystemMessages.deleteRow(scope.row)"
 						>
 							删除
 						</el-button>
@@ -144,31 +146,31 @@ onMounted(() => {
 			</el-table>
 			<div class="demo-pagination-block">
 				<el-pagination
-					v-model:current-page="reportAdmin.params.offset"
-					v-model:page-size="reportAdmin.params.limit"
+					v-model:current-page="SystemMessages.params.offset"
+					v-model:page-size="SystemMessages.params.limit"
 					:page-sizes="[10, 20, 30, 40]"
 					:background="true"
 					layout="->, total, sizes, prev, pager, next, jumper"
-					:total="reportAdmin.total"
-					@size-change="reportAdmin.handleSizeChange"
-					@current-change="reportAdmin.handleCurrentChange"
+					:total="SystemMessages.total"
+					@size-change="SystemMessages.handleSizeChange"
+					@current-change="SystemMessages.handleCurrentChange"
 				/>
 			</div>
 		</el-card>
 	</div>
 
 	<el-dialog
-		v-model="reportAdmin.dialogFormVisible"
+		v-model="SystemMessages.dialogFormVisible"
 		:title="
-			reportAdmin.isChangeReportList
-				? '修改' + reportAdmin.changeForm.title
+			SystemMessages.isChangeSystemMessagesList
+				? '修改' + SystemMessages.changeForm.title
 				: '添加报告'
 		"
-		:before-close="reportAdmin.handleClose"
+		:before-close="SystemMessages.handleClose"
 	>
 		<el-form
 			style="padding-right: 20px"
-			:model="reportAdmin.form"
+			:model="SystemMessages.form"
 			v-loading="loading.loading1"
 			label-width="120px"
 			:rules="rules"
@@ -178,7 +180,7 @@ onMounted(() => {
 			<el-form-item prop="title" label="标题">
 				<el-input
 					clearable
-					v-model="reportAdmin.form.title"
+					v-model="SystemMessages.form.title"
 					autocomplete="off"
 					placeholder="请输入标题"
 				/>
@@ -187,10 +189,10 @@ onMounted(() => {
 				<!-- <el-transfer
 					filterable
 					:titles="['用户列表', '所选用户']"
-					v-model="reportAdmin.form.user_id"
+					v-model="SystemMessages.form.user_id"
 					:filter-method="filterMethod"
 					filter-placeholder="搜索用户"
-					:data="reportAdmin.userList"
+					:data="SystemMessages.userList"
 				/> -->
 				<el-select
 					filterable
@@ -198,12 +200,11 @@ onMounted(() => {
 					collapse-tags
 					collapse-tags-tooltip
 					multiple
-					v-model="reportAdmin.form.user_id"
+					v-model="SystemMessages.form.user_id"
 					placeholder="选择用户"
-					style="width: 50%"
 				>
 					<el-option-group
-						v-for="group in reportAdmin.userList"
+						v-for="group in SystemMessages.userList"
 						:key="group.role"
 						:label="group.roleName"
 					>
@@ -215,7 +216,7 @@ onMounted(() => {
 						/>
 					</el-option-group>
 					<!-- <el-option
-						v-for="item in reportAdmin.userList"
+						v-for="item in SystemMessages.userList"
 						:key="item"
 						:label="item.name"
 						:value="item.id"
@@ -225,7 +226,7 @@ onMounted(() => {
 			<el-form-item prop="report_content" label="报告内容">
 				<el-input
 					clearable
-					v-model="reportAdmin.form.report_content"
+					v-model="SystemMessages.form.report_content"
 					autocomplete="off"
 					placeholder="请输入报告内容"
 					type="textarea"
@@ -236,7 +237,7 @@ onMounted(() => {
 				<el-upload
 					class="avatar-uploader"
 					action="#"
-					v-model:file-list="reportAdmin.fileList"
+					v-model:file-list="SystemMessages.fileList"
 					:limit="1"
 					:auto-upload="false"
 					:on-exceed="handleExceed"
@@ -247,39 +248,43 @@ onMounted(() => {
 						<div class="el-upload__tip">仅允许上传一个文件</div>
 					</template>
 				</el-upload>
-				<el-dialog v-model="reportAdmin.dialogVisible">
-					<img w-full :src="reportAdmin.dialogImageUrl" alt="Preview Image" />
+				<el-dialog v-model="SystemMessages.dialogVisible">
+					<img
+						w-full
+						:src="SystemMessages.dialogImageUrl"
+						alt="Preview Image"
+					/>
 				</el-dialog>
 			</el-form-item>
-			<div class="downLoadFile" v-if="reportAdmin.changeForm.img_url">
+			<div class="downLoadFile" v-if="SystemMessages.changeForm.img_url">
 				<span class="p-6px"> 报告详情： </span>
 				<a
 					class="downLoadFile-a"
-					:href="reportAdmin.changeForm.img_url"
-					:download="reportAdmin.changeForm.name + '报告内容'"
+					:href="SystemMessages.changeForm.img_url"
+					:download="SystemMessages.changeForm.name + '报告内容'"
 					target="_blank"
 				>
 					<i class="iconfont icon-shiyongwendang"></i>
-					{{ reportAdmin.changeForm.name }}报告附件
+					{{ SystemMessages.changeForm.name }}报告附件
 				</a>
 			</div>
 		</el-form>
 		<template #footer>
 			<span class="dialog-footer">
-				<el-button @click.stop="reportAdmin.handleClose">取消</el-button>
+				<el-button @click.stop="SystemMessages.handleClose">取消</el-button>
 				<el-button
 					type="primary"
 					:loading="loading.loading2"
-					@click.stop="reportAdmin.onSubmit(ruleFormRef)"
+					@click.stop="SystemMessages.onSubmit(ruleFormRef)"
 				>
 					提交
 				</el-button>
 			</span>
 		</template>
 	</el-dialog>
-
+	<!-- 发送消息 -->
 	<el-dialog
-		v-model="reportAdmin.sendDialogVisible"
+		v-model="SystemMessages.sendDialogVisible"
 		title="提示"
 		width="30%"
 		align-center
@@ -298,11 +303,11 @@ onMounted(() => {
 				]"
 			>
 				<el-select
-					v-model="reportAdmin.send_user_name"
+					v-model="SystemMessages.send_user_name"
 					placeholder="请选择发送信息者"
 				>
 					<el-option
-						v-for="item in reportAdmin.reportAdminNameList"
+						v-for="item in SystemMessages.systemMessagesNameList"
 						:key="item.id"
 						:label="item.value"
 						:value="item.value"
@@ -312,8 +317,8 @@ onMounted(() => {
 		</el-form>
 		<template #footer>
 			<span class="dialog-footer">
-				<el-button @click="reportAdmin.closeSend()">取消</el-button>
-				<el-button type="primary" @click="reportAdmin.submitSend()">
+				<el-button @click="SystemMessages.closeSend()">取消</el-button>
+				<el-button type="primary" @click="SystemMessages.submitSend()">
 					确认发送
 				</el-button>
 			</span>
@@ -358,5 +363,5 @@ onMounted(() => {
 <route lang="yaml">
 meta:
   layout: main
-  name: 管理员报告管理
+  name: 系统消息管理
 </route>

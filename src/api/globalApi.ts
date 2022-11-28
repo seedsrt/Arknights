@@ -243,6 +243,7 @@ export function getReportList(params: object) {
 
 // -------------------------------------------------------------------
 
+// 报告汇总管理
 export function getSummarysList(params: object) {
 	return get('/admin/summarys/list', params)
 }
@@ -259,8 +260,39 @@ export function delSummarys(id: number) {
 	return del('/admin/summarys/del/' + id)
 }
 
-export function sendSummarysList(id: number) {
-	return get('/admin/summarys/send', { id: id })
+export function sendSummarysList(params: object) {
+	return get('/admin/summarys/send', params)
+}
+
+export function getSendSummarysName() {
+	return get('/admin/summarys/send_name')
+}
+
+// -------------------------------------------------------------------
+
+// 系统消息管理
+export function getSystemMessagesList(params: object) {
+	return get('/admin/system_messages/list', params)
+}
+
+export function addSystemMessages(params: object, data: object) {
+	return post('/admin/system_messages/create', params, data)
+}
+
+export function updateSystemMessages(id: number, params: object, data: object) {
+	return post('/admin/system_messages/update/' + id, params, data)
+}
+
+export function delSystemMessages(id: number) {
+	return del('/admin/system_messages/del/' + id)
+}
+
+export function sendSystemMessages(params: object) {
+	return get('/admin/system_messages/send', params)
+}
+
+export function getSendSystemMessagesName() {
+	return get('/admin/system_messages/send_name')
 }
 
 // -------------------------------------------------------------------
@@ -300,4 +332,26 @@ export function updateConfigs(id: Number | String, params: object) {
 // 创建配置信息
 export function delConfigs(id: Number | String) {
 	return del('/admin/configs/del/' + id)
+}
+
+// -------------------------------------------------------------------
+
+// 查询收款方式
+export function getPaymentTypeList() {
+	return get('/admin/payment_type/get')
+}
+
+// 添加收款方式
+export function addPaymentTypeList(params: object) {
+	return post('/admin/payment_type/add', params)
+}
+
+// 修改收款方式
+export function updatePaymentTypeList(params: object) {
+	return get('/admin/payment_type/update', params)
+}
+
+// 删除收款方式
+export function delPaymentTypeList(params: object) {
+	return get('/admin/payment_type/del', params)
 }

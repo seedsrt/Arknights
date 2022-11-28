@@ -142,6 +142,7 @@ onMounted(() => {
 			>
 				<el-form-item prop="skill_type" label="技能类型">
 					<el-select
+						filterable
 						v-model="skillInfor.form.skill_type"
 						placeholder="请选择技能类型"
 					>
