@@ -27,7 +27,7 @@ export default defineConfig({
 		proxy: {
 			//配置跨域
 			'/api': {
-				target: 'http://marsspace.eqask.com', //后端地址
+				target: 'http://www.kaccter.top/', //后端地址
 				ws: true,
 				changeOrigin: true, //允许跨域
 				rewrite: (path) => path.replace(/^\/api/, ''),

@@ -1,36 +1,63 @@
 <script setup lang="ts">
-import dayjs from 'dayjs'
-const TList = createTList()
-const time = ref(new Date())
-const aside = createAside()
-let timer: any = null
+const aside = createLoading()
 onMounted(() => {
-	TList.getTaskClassList()
-	aside.asideActive = '/'
-	aside.breadcrumb = ['/']
-	aside.isCollapse = false
-	aside.title = '主页'
-	timer = setInterval(() => {
-		time.value = new Date()
-	}, 1000)
-})
-onBeforeUnmount(() => {
-	clearInterval(timer)
-	timer = null
+	aside.getData()
 })
 </script>
 
 <template>
-	<el-card>
-		<h1>欢迎使用</h1>
-		当前时间为：{{ dayjs(time).format('YYYY-MM-DD HH:mm:ss') }}
-	</el-card>
+	<div class="logo-box">
+		<div class="logo">LOGO</div>
+		<div class="animate-wave"></div>
+	</div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.logo-box {
+	position: relative;
+	width: 50px;
+	height: 50px;
+	.logo {
+		text-align: center;
+		line-height: 50px;
+		border-radius: 50%;
+		margin: 0 auto;
+		z-index: 9;
+	}
 
-<route lang="yaml">
-meta:
-  layout: main
-  name: 主页
-</route>
+	.animate-wave {
+		width: 60px;
+		height: 60px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		background: rgb(255, 216, 2);
+		clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+		animation: 1500ms ease-out 0s infinite normal none running start;
+	}
+
+	// @-webkit-keyframes opac {
+	// 	from {
+	// 		opacity: 1;
+	// 		width: 0;
+	// 		height: 0;
+	// 		top: 50%;
+	// 		left: 50%;
+	// 	}
+
+	// 	to {
+	// 		opacity: 0;
+	// 		width: 100%;
+	// 		height: 100%;
+	// 		top: 0;
+	// 		left: 0;
+	// 	}
+	// }
+
+	.animate-wave * {
+		width: 100%;
+		position: absolute;
+		transform: rotate(45deg);
+	}
+}
+</style>

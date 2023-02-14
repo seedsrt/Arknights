@@ -7,7 +7,6 @@ import { router } from '~/modules/router'
 import { ElMessage } from 'element-plus'
 import NProgress from 'nprogress'
 // 第一个代理基础路径配置
-const loading = createLoading()
 //axios.defaults.baseURL = 'https://api.noechou.cn/';
 // 环境的切换
 
@@ -16,11 +15,6 @@ axios.defaults.baseURL = import.meta.env['VITE_APP_BASE_API']
  * 跳转登录页
  * 携带当前页面路由，以期在登录页面完成登录后返回当前页面
  */
-const toLogin = () => {
-	router.replace({
-		path: '/login',
-	})
-}
 
 /**
  * 请求失败后的错误统一处理
@@ -32,14 +26,12 @@ const errorHandle = (status: number, other: any) => {
 		case 600:
 			ElMessage.error('未登录，请先登录')
 			localStorage.removeItem('token')
-			toLogin()
 			break
 		// 403 token过期
 		// 清除token并跳转登录页
 		case 403:
 			ElMessage.error('token已过期')
 			localStorage.removeItem('token')
-			toLogin()
 			break
 		// 404请求不存在
 		case 404:
@@ -70,8 +62,8 @@ instance.interceptors.request.use(
 		// 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token
 		// 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
 		//而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
-		const token = localStorage.getItem('token')
-		token && (config.headers.Authorization = 'Bearer ' + token)
+		// const token = localStorage.getItem('token')
+		// token && (config.headers.Authorization = 'Bearer ' + token)
 		NProgress.start()
 		return config
 	},
@@ -82,15 +74,6 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
 	// 请求成功
 	(res) => {
-		if (res.data.msg == '验证码错误！') {
-			const login = createLogin()
-			login.getCaptcha()
-		}
-		if (res.data.code == 200) {
-			Promise.resolve(res)
-		} else {
-			errorHandle(res.data.code, res)
-		}
 		NProgress.done()
 		return res.data
 	},
@@ -98,10 +81,6 @@ instance.interceptors.response.use(
 	// 请求失败
 	(error) => {
 		const { response } = error
-		loading.loading = false
-		loading.loading1 = false
-		loading.loading2 = false
-		loading.loading3 = false
 		NProgress.done()
 		if (response) {
 			// 请求已发出，但是不在2xx的范围

@@ -1,22 +1,15 @@
 import { defineStore } from 'pinia'
-import { nextTick } from 'vue'
+import { getGacha } from '~/api/globalApi'
 export default defineStore('loading', {
 	state() {
 		return {
 			//变量
-			loading: false,
-			loading1: false,
-			loading2: false,
-			loading3: false,
-			isReloading: true,
 		}
 	},
 	actions: {
-		reloadPart() {
-			this.isReloading = false
-			nextTick(() => {
-				this.isReloading = true
-			})
+		async getData() {
+			const res = await getGacha('+vwLUYsFRb98t2nNIGFBn79i')
+			console.log(res)
 		},
 	},
 	persist: false, //是否储存在localStorage
